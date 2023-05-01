@@ -2,13 +2,13 @@ package topjava.restaurantvoting.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "vote")
+@Table(name = "vote", indexes = @Index(name = "user_vote_per_day", columnList = "user_id,vote_date,rest_id", unique = true))
 public class Vote extends BaseEntity {
-    @Column(name = "vote_datetime")
-    private LocalDateTime voteDateTime;
+    @Column(name = "vote_date")
+    private LocalDate voteDate;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -20,19 +20,19 @@ public class Vote extends BaseEntity {
     public Vote() {
     }
 
-    public Vote(Integer id, LocalDateTime voteDateTime, User user, Restaurant restaurant) {
+    public Vote(Integer id, LocalDate voteDate, User user, Restaurant restaurant) {
         super(id);
-        this.voteDateTime = voteDateTime;
+        this.voteDate = voteDate;
         this.user = user;
         this.restaurant = restaurant;
     }
 
-    public LocalDateTime getVoteDateTime() {
-        return voteDateTime;
+    public LocalDate getVoteDate() {
+        return voteDate;
     }
 
-    public void setVoteDateTime(LocalDateTime voteDateTime) {
-        this.voteDateTime = voteDateTime;
+    public void setVoteDate(LocalDate voteDate) {
+        this.voteDate = voteDate;
     }
 
     public User getUser() {

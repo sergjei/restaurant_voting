@@ -1,4 +1,7 @@
-INSERT INTO users (name, email, password) VALUES ('User', 'user@yandex.ru', 'password'),       ('Admin', 'admin@gmail.com', 'admin'),       ('User2', 'guest@gmail.com', 'guest');
+INSERT INTO users (name, email, password)
+VALUES ('User', 'user@yandex.ru', 'password'),
+       ('Admin', 'admin@gmail.com', 'admin'),
+       ('Guest', 'guest@gmail.com', 'guest');
 
 INSERT INTO user_role (role,user_id)
 VALUES('USER',1),
@@ -12,21 +15,21 @@ VALUES ('Bistro', 'French str'),
 
 
 INSERT INTO meal (menu_date, description, price, rest_id) 
-VALUES ('2023-01-30', 'Hot-dog', 700, 1),
-       ('2023-01-30', 'pizza', 1200, 1),
-       ('2023-01-30', 'pasta', 1000, 1),
-       ('2023-01-30', 'rolls', 2000, 2),
-       ('2023-01-30', 'burger', 1200, 2),
-       ('2023-01-30', 'buritto', 1200, 2),
-       ('2023-01-31', 'bulmeni', 700, 1),
-       ('2023-01-31', 'ragu', 1200, 1),
-       ('2023-01-31', 'cotleties', 1000, 1),
-       ('2023-01-31', 'midiies', 2200, 2),
-       ('2023-01-31', 'shrimps', 1700, 2),
-       ('2023-01-31', 'calmar', 1200, 2);
+VALUES (CURRENT_DATE()-1, 'Hot-dog', 700, 1),
+       (CURRENT_DATE()-1, 'pizza', 1200, 1),
+       (CURRENT_DATE()-1, 'pasta', 1000, 1),
+       (CURRENT_DATE()-1, 'rolls', 2000, 2),
+       (CURRENT_DATE()-1, 'burger', 1200, 2),
+       (CURRENT_DATE()-1, 'buritto', 1200, 2),
+       (CURRENT_DATE(), 'bulmeni', 700, 1),
+       (CURRENT_DATE(), 'ragu', 1200, 1),
+       (CURRENT_DATE(), 'cotleties', 1000, 1),
+       (CURRENT_DATE(), 'midiies', 2200, 2),
+       (CURRENT_DATE(), 'shrimps', 1700, 2),
+       (CURRENT_DATE(), 'calmar', 1200, 2);
 
 INSERT INTO vote (vote_datetime, rest_id, user_id)
-VALUES ('2023-04-30', 1,  1),
-       ('2023-04-30', 2,  2),
-       ('2023-04-30', 2,  3);
+VALUES (CURRENT_DATE()-1, 1,  1),
+       (CURRENT_DATE()-1, 2,  2),
+       (CURRENT_DATE()-1, 2,  3);
 

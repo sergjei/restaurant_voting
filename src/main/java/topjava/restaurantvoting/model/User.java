@@ -13,13 +13,17 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = @Index(name = "user_email", columnList = "email", unique = true))
 public class User extends BaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "firstname")
     @NotBlank
     @Size(max = 128)
-    private String name;
+    private String firstName;
+    @Column(name = "lastname")
+    @NotBlank
+    @Size(max = 128)
+    private String lastName;
 
     @Column(name = "email")
     @NotBlank
@@ -35,7 +39,7 @@ public class User extends BaseEntity {
 
     //https://stackoverflow.com/questions/53499668/hibernate-map-two-columns-to-a-hashmaps-key-and-value
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    @OrderBy("voteDateTime DESC")
+    @OrderBy("voteDate DESC")
     private List<Vote> votes;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -46,9 +50,10 @@ public class User extends BaseEntity {
     private Set<Role> roles;
 
 
-    public User(Integer id, String name, String email, String password, Role... roles) {
+    public User(Integer id, String firstName, String lastName, String email, String password, Role... roles) {
         super(id);
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
         setRoles(List.of(roles));
@@ -57,12 +62,20 @@ public class User extends BaseEntity {
     public User() {
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {

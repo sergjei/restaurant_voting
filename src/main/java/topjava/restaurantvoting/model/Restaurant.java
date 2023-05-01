@@ -1,12 +1,14 @@
 package topjava.restaurantvoting.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
 @Entity
-@Table(name = "restaurant")
+@Table(name = "restaurant", indexes = @Index(name = "rest_email_address", columnList = "email,address", unique = true))
 public class Restaurant extends BaseEntity {
     @Column(name = "name")
     @NotBlank
@@ -15,18 +17,23 @@ public class Restaurant extends BaseEntity {
     @Column(name = "address")
     @NotBlank
     private String address;
-
+    @Column(name = "email")
+    @Email
+    @NotBlank
+    @Size(max = 128)
+    private String email;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "restaurant")
     @OrderBy("menuDate DESC")
     private List<Meal> menu;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
-    @OrderBy("voteDateTime DESC")
+    @OrderBy("voteDate DESC")
     private List<Vote> vote;
 
-    public Restaurant(Integer id, String name, String address, List<Meal> menu) {
+    public Restaurant(Integer id, String name, String address, String email, List<Meal> menu) {
         super(id);
         this.name = name;
         this.address = address;
+        this.email = email;
         this.menu = menu;
     }
 
@@ -47,6 +54,14 @@ public class Restaurant extends BaseEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public List<Meal> getMenu() {
