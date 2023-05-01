@@ -5,10 +5,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import topjava.restaurantvoting.model.Role;
-import topjava.restaurantvoting.model.User;
-
-import java.util.Set;
+import topjava.restaurantvoting.repository.UserRepository;
 
 @SpringBootApplication
 public class RestaurantVotingApplication implements ApplicationRunner {
