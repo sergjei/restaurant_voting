@@ -1,0 +1,87 @@
+package topjava.restaurantvoting.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+
+@Entity
+@Table(name = "users")
+public class User extends BaseEntity {
+
+    @Column(name = "name")
+    @NotBlank
+    @Size(max = 128)
+    private String name;
+
+    @Column(name = "email")
+    @NotBlank
+    @Email
+    @Size(max = 128)
+    private String email;
+
+    @Column(name = "password")
+    @NotBlank
+    @Size(min = 5, max = 128)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+
+    //https://stackoverflow.com/questions/53499668/hibernate-map-two-columns-to-a-hashmaps-key-and-value
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OrderBy("voteDateTime DESC")
+    private List<Vote> votes;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uc_user_role")})
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
+
+
+    public User(Integer id, String name, String email, String password, Role... roles) {
+        super(id);
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        setRoles(List.of(roles));
+    }
+
+    public User() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
+    }
+}
