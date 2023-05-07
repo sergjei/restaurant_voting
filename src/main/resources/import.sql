@@ -1,7 +1,7 @@
-INSERT INTO users (name, email, password)
-VALUES ('User', 'user@yandex.ru', 'password'),
-       ('Admin', 'admin@gmail.com', 'admin'),
-       ('Guest', 'guest@gmail.com', 'guest');
+INSERT INTO users (firstname, lastname, email, password)
+VALUES ('Sergey','Plot', 'user@gmail.com', '{noop}password'),
+       ('Admin','Adminsky', 'admin@gmail.com', '{noop}admin'),
+       ('Guest','Guestski', 'guest@gmail.com', '{noop}guest');
 
 INSERT INTO user_role (role,user_id)
 VALUES('USER',1),
@@ -28,7 +28,7 @@ VALUES (CURRENT_DATE()-1, 'Hot-dog', 700, 1),
        (CURRENT_DATE(), 'shrimps', 1700, 2),
        (CURRENT_DATE(), 'calmar', 1200, 2);
 
-INSERT INTO vote (vote_datetime, rest_id, user_id)
+INSERT INTO vote (vote_date, rest_id, user_id)
 VALUES (CURRENT_DATE()-1, 1,  1),
        (CURRENT_DATE()-1, 2,  2),
        (CURRENT_DATE()-1, 2,  3);

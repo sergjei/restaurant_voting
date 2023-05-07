@@ -1,12 +1,18 @@
 package topjava.restaurantvoting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
+import topjava.restaurantvoting.PasswordDeserializer;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
@@ -14,7 +20,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users", indexes = @Index(name = "user_email", columnList = "email", unique = true))
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Serializable {
 
     @Column(name = "firstname")
     @NotBlank
@@ -35,11 +41,14 @@ public class User extends BaseEntity {
     @NotBlank
     @Size(min = 5, max = 128)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonDeserialize(using = PasswordDeserializer.class)
     private String password;
 
     //https://stackoverflow.com/questions/53499668/hibernate-map-two-columns-to-a-hashmaps-key-and-value
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OrderBy("voteDate DESC")
+    @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
     private List<Vote> votes;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -47,6 +56,8 @@ public class User extends BaseEntity {
             uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uc_user_role")})
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
+    @JoinColumn
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
 
 
@@ -94,7 +105,19 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
     public void setRoles(Collection<Role> roles) {
         this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
+    }
+
+    public List<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
     }
 }

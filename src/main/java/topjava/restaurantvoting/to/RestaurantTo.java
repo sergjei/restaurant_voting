@@ -1,47 +1,47 @@
-package topjava.restaurantvoting.model;
+package topjava.restaurantvoting.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import topjava.restaurantvoting.model.BaseEntity;
+import topjava.restaurantvoting.model.Meal;
+import topjava.restaurantvoting.model.Vote;
 
 import java.util.List;
 
-@Entity
-@Table(name = "restaurant", indexes = @Index(name = "rest_email_address", columnList = "email,address", unique = true))
-public class Restaurant extends BaseEntity {
-    @Column(name = "name")
+public class RestaurantTo extends BaseEntity {
+
     @NotBlank
     private String name;
 
-    @Column(name = "address")
+
     @NotBlank
     private String address;
-    @Column(name = "email")
+
     @Email
     @NotBlank
     @Size(max = 128)
     private String email;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "restaurant")
-    @OrderBy("menuDate DESC")
+
     private List<Meal> menu;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
-    @OrderBy("voteDate DESC")
     private List<Vote> vote;
-
-    public Restaurant(Integer id, String name, String address, String email, List<Meal> menu) {
+    private int voteCount;
+    public RestaurantTo (Integer id,String name,String email, String address,Long voteCount){
         super(id);
-        this.name = name;
-        this.address = address;
-        this.email = email;
-        this.menu = menu;
+        this.name =name;
+        this.email=email;
+        this.address=address;
+        this.voteCount = Long.valueOf(voteCount).intValue();
     }
+    public RestaurantTo(){}
 
-    public Restaurant() {
-    }
 
     public String getName() {
         return name;
@@ -81,5 +81,13 @@ public class Restaurant extends BaseEntity {
 
     public void setVote(List<Vote> vote) {
         this.vote = vote;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 }

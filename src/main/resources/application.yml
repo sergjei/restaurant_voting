@@ -42,3 +42,18 @@ spring:
       console:
         path: /h2-console
         enabled: true
+  jackson:
+      visibility.field: any
+      visibility.getter: none
+      visibility.setter: none
+      visibility.is-getter: none
+#  security:
+#    user:
+#      name: user
+#      password: password
+#      roles: USER
+logging:
+  level:
+    root: WARN
+    topjava.restaurantvoting: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG

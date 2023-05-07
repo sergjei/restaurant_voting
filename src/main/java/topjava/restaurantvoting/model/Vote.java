@@ -1,11 +1,17 @@
 package topjava.restaurantvoting.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
+import topjava.restaurantvoting.VoteCustomDeserializer;
+import topjava.restaurantvoting.VoteCustomSerializer;
 
 import java.time.LocalDate;
 
+@JsonSerialize(using = VoteCustomSerializer.class)
+@JsonDeserialize(using = VoteCustomDeserializer.class)
 @Entity
-@Table(name = "vote", indexes = @Index(name = "user_vote_per_day", columnList = "user_id,vote_date,rest_id", unique = true))
+@Table(name = "vote", indexes = @Index(name = "user_vote_per_day", columnList = "user_id,vote_date", unique = true))
 public class Vote extends BaseEntity {
     @Column(name = "vote_date")
     private LocalDate voteDate;
@@ -19,10 +25,15 @@ public class Vote extends BaseEntity {
 
     public Vote() {
     }
-
     public Vote(Integer id, LocalDate voteDate, User user, Restaurant restaurant) {
         super(id);
         this.voteDate = voteDate;
+        this.user = user;
+        this.restaurant = restaurant;
+    }
+    public Vote(Integer id,  User user, Restaurant restaurant) {
+        super(id);
+        this.voteDate = LocalDate.now();
         this.user = user;
         this.restaurant = restaurant;
     }
