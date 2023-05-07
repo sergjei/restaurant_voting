@@ -21,6 +21,7 @@ public class VoteCustomDeserializer extends StdDeserializer<Vote> {
     UserRepository ur;
     @Autowired
     RestaurantRepository rr;
+
     public VoteCustomDeserializer() {
         this(null);
     }
@@ -33,12 +34,10 @@ public class VoteCustomDeserializer extends StdDeserializer<Vote> {
     public Vote deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
-
-        Integer id = node.has("id")? (Integer) ((IntNode) node.get("id")).numberValue():null;
+        Integer id = node.has("id") ? (Integer) ((IntNode) node.get("id")).numberValue() : null;
         LocalDate voteDate = LocalDate.parse(node.get("voteDate").asText());
-        User user =  ur.findById((Integer)node.get("user").numberValue()).orElseThrow();
-        Restaurant restaurant = rr.findById((Integer)node.get("restaurant").numberValue()).orElseThrow();
-
-        return new Vote(id, voteDate, user,restaurant);
+        User user = ur.findById((Integer) node.get("user").numberValue()).orElseThrow();
+        Restaurant restaurant = rr.findById((Integer) node.get("restaurant").numberValue()).orElseThrow();
+        return new Vote(id, voteDate, user, restaurant);
     }
 }

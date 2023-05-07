@@ -5,8 +5,6 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
 import org.springframework.util.Assert;
 
-import java.io.Serializable;
-
 @MappedSuperclass
 //  https://stackoverflow.com/a/6084701/548473
 @Access(AccessType.FIELD)
@@ -15,14 +13,19 @@ public abstract class BaseEntity implements Persistable<Integer> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
-    protected BaseEntity(){}
-    protected BaseEntity(Integer id){this.id = id;}
+    protected BaseEntity() {
+    }
 
-    public Integer getId(){
+    protected BaseEntity(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
         return id;
     }
-    public void setId(Integer id){
-        this.id=id;
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     // doesn't work for hibernate lazy proxy

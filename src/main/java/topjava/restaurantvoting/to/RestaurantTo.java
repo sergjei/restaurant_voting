@@ -1,10 +1,6 @@
 package topjava.restaurantvoting.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -33,14 +29,17 @@ public class RestaurantTo extends BaseEntity {
     @JsonIgnore
     private List<Vote> vote;
     private int voteCount;
-    public RestaurantTo (Integer id,String name,String email, String address,Long voteCount){
+
+    public RestaurantTo(Integer id, String name, String email, String address, Long voteCount) {
         super(id);
-        this.name =name;
-        this.email=email;
-        this.address=address;
-        this.voteCount = Long.valueOf(voteCount).intValue();
+        this.name = name;
+        this.email = email;
+        this.address = address;
+        this.voteCount = voteCount.intValue();
     }
-    public RestaurantTo(){}
+
+    public RestaurantTo() {
+    }
 
 
     public String getName() {

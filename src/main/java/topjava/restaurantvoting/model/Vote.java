@@ -3,6 +3,9 @@ package topjava.restaurantvoting.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import org.springframework.format.annotation.DateTimeFormat;
 import topjava.restaurantvoting.VoteCustomDeserializer;
 import topjava.restaurantvoting.VoteCustomSerializer;
 
@@ -14,24 +17,31 @@ import java.time.LocalDate;
 @Table(name = "vote", indexes = @Index(name = "user_vote_per_day", columnList = "user_id,vote_date", unique = true))
 public class Vote extends BaseEntity {
     @Column(name = "vote_date")
+    @DateTimeFormat
+    @NotNull
+    @PastOrPresent
     private LocalDate voteDate;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "rest_id", nullable = false)
+    @NotNull
     private Restaurant restaurant;
 
     public Vote() {
     }
+
     public Vote(Integer id, LocalDate voteDate, User user, Restaurant restaurant) {
         super(id);
         this.voteDate = voteDate;
         this.user = user;
         this.restaurant = restaurant;
     }
-    public Vote(Integer id,  User user, Restaurant restaurant) {
+
+    public Vote(Integer id, User user, Restaurant restaurant) {
         super(id);
         this.voteDate = LocalDate.now();
         this.user = user;

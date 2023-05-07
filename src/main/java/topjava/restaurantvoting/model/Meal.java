@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "meal", indexes = {
-        @Index(name = "restaurant_uniq_datemeal", columnList = "menu_date,rest_id,description", unique = true),
+        @Index(name = "restaurant_uniq_meal_date", columnList = "menu_date,rest_id,description", unique = true),
         @Index(name = "restaurant_menu_date", columnList = "menu_date, rest_id")
 })
 public class Meal extends BaseEntity {

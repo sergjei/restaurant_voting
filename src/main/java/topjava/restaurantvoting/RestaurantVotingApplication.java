@@ -24,17 +24,8 @@ public class RestaurantVotingApplication extends SpringBootServletInitializer im
         SpringApplication.run(RestaurantVotingApplication.class, args);
     }
 
-//    @Override
-//    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-//        // Customize the application or call application.sources(...) to add sources
-//        // Since our example is itself a @Configuration class (via @SpringBootApplication)
-//        // we actually don't need to override this method.
-//        return application;
-//    }
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        userRepository.save(new User("User_First", "user@gmail.com", "password", Role.USER));
-//        userRepository.save(new User("Admin_First", "admin@javaops.ru", "admin", Role.USER, Role.ADMIN));
         System.out.println(userRepository.findAll());
         System.out.println(restaurantRepository.getTodayMenu());
     }

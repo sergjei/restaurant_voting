@@ -22,7 +22,6 @@ public class VoteCustomSerializer extends StdSerializer<Vote> {
     public void serialize(
             Vote value, JsonGenerator jgen, SerializerProvider provider)
             throws IOException, JsonProcessingException {
-
         jgen.writeStartObject();
         jgen.writeNumberField("id", value.getId());
         jgen.writeStringField("voteDate", value.getVoteDate().toString());
