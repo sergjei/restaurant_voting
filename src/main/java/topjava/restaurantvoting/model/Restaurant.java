@@ -30,7 +30,7 @@ public class Restaurant extends BaseEntity {
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OrderBy("voteDate DESC")
-    private List<Vote> vote;
+    private List<Vote> votes;
 
     public Restaurant(Integer id, String name, String address, String email, List<Meal> menu) {
         super(id);
@@ -81,10 +81,10 @@ public class Restaurant extends BaseEntity {
     }
 
     public List<Vote> getVote() {
-        return vote;
+        return votes;
     }
 
-    public void setVote(List<Vote> vote) {
-        this.vote = vote;
+    public void setVote(List<Vote> votes) {
+        this.votes = votes;
     }
 }

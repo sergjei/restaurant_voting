@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.utils.DateUtil;
-import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.model.Meal;
 import topjava.restaurantvoting.repository.MealRepository;
 import topjava.restaurantvoting.repository.RestaurantRepository;
+import topjava.restaurantvoting.utils.DateUtil;
+import topjava.restaurantvoting.utils.ValidationUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -67,26 +67,13 @@ public class MealController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Meal> create(@PathVariable("rest_id") Integer restId,
-                                       @Valid @RequestBody Meal meal) {
-        ValidationUtil.checkNew(meal);
-        ValidationUtil.assureIdConsistent(meal.getRestaurant(), restId);
-        Meal created = mealRepository.save(meal);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(CURRENT_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
-    }
-
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<List<Meal>> updateMenu(@PathVariable("rest_id") Integer restId,
-                                                 @Valid @RequestBody List<Meal> meals) { //https://stackoverflow.com/questions/28150405/validation-of-a-list-of-objects-in-spring
+    public ResponseEntity<List<Meal>> create(@PathVariable("rest_id") Integer restId,
+                                             @Valid @RequestBody Meal... meals) { //https://stackoverflow.com/questions/28150405/validation-of-a-list-of-objects-in-spring
         for (Meal m : meals) {
             ValidationUtil.checkNew(m);
             ValidationUtil.assureIdConsistent(m.getRestaurant(), restId);
         }
-        List<Meal> created = mealRepository.saveAll(meals);
+        List<Meal> created = mealRepository.saveAll(List.of(meals));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(CURRENT_URL)
                 .build().toUri();
