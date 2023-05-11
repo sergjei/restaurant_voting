@@ -38,6 +38,12 @@ public class Meal extends BaseEntity {
         this.menuDate = menuDate;
         this.price = price;
     }
+    public Meal(Integer id,LocalDate menuDate, String description,  int price) {
+        super(id);
+        this.description = description;
+        this.menuDate = menuDate;
+        this.price = price;
+    }
 
     public Meal() {
     }
@@ -54,7 +60,7 @@ public class Meal extends BaseEntity {
         return description;
     }
 
-    public void setName(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 

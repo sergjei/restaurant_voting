@@ -1,7 +1,7 @@
 INSERT INTO users (firstname, lastname, email, password)
 VALUES ('Sergey','Plot', 'user@gmail.com', '{noop}password'),
        ('Admin','Adminsky', 'admin@gmail.com', '{noop}admin'),
-       ('Guest','Guestski', 'guest@gmail.com', '{noop}guest');
+       ('User','Guestski', 'user2@gmail.com', '{noop}guest');
 
 INSERT INTO user_role (role,user_id)
 VALUES('USER',1),
@@ -9,9 +9,9 @@ VALUES('USER',1),
       ('USER', 2),
       ('USER', 3);
 --
-INSERT INTO restaurant (name, address) 
-VALUES ('Bistro', 'French str'),
-       ('NeedForFood', 'Belfast str');
+INSERT INTO restaurant (name, address,email)
+VALUES ('Bistro', 'French str','bistro@gmail.com'),
+       ('NeedForFood', 'Belfast str','fastfood@gmail.com');
 
 
 INSERT INTO meal (menu_date, description, price, rest_id) 

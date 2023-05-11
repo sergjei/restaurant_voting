@@ -57,3 +57,8 @@ logging:
     root: WARN
     topjava.restaurantvoting: DEBUG
     org.springframework.security.web.FilterChainProxy: DEBUG
+server.servlet:
+    encoding:
+      charset: UTF-
+      enabled: true
+      force: true

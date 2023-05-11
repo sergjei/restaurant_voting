@@ -39,7 +39,12 @@ public class Restaurant extends BaseEntity {
         this.email = email;
         this.menu = menu;
     }
-
+    public Restaurant(Integer id, String name, String address, String email) {
+        super(id);
+        this.name = name;
+        this.address = address;
+        this.email = email;
+    }
     public Restaurant() {
     }
 
