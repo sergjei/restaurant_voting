@@ -1,13 +1,14 @@
 package topjava.restaurantvoting.controller;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.DateUtil;
-import topjava.restaurantvoting.ValidationUtil;
+import topjava.restaurantvoting.utils.DateUtil;
+import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.model.BaseEntity;
 import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.model.User;
@@ -54,14 +55,14 @@ public class AdminController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable Integer id, @RequestBody User updated) {
+    public void update(@PathVariable Integer id, @Valid @RequestBody User updated) {
         ValidationUtil.assureIdConsistent(updated, id);
         userRepository.save(updated);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> create(@RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
         ValidationUtil.checkNew(user);
         User created = userRepository.save(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -78,14 +79,16 @@ public class AdminController {
     @GetMapping("/vote") //return all votes by default
     public List<Vote> getVotes(@RequestParam @Nullable LocalDate startDate,
                                @RequestParam @Nullable LocalDate endDate,
-                               @RequestBody @Nullable List<User> users,
-                               @RequestBody @Nullable List<Restaurant> restaurants) {
+                               @RequestParam  @Nullable List<Integer> users,
+                               @RequestParam  @Nullable List<Integer> restaurants) {
         startDate = DateUtil.checkedStartDateOrMin(startDate);
         endDate = DateUtil.checkedEndDate(endDate);
-        List<Integer> userIds = users == null ? Collections.emptyList()
-                : users.stream().map(BaseEntity::getId).toList();
-        List<Integer> restaurantIds = restaurants == null ? Collections.emptyList()
-                : restaurants.stream().map(BaseEntity::getId).toList();
+        List<Integer> userIds = users == null ? Collections.emptyList():users;
+        List<Integer> restaurantIds = restaurants == null ? Collections.emptyList():restaurants;
+//        List<Integer> userIds = users == null ? Collections.emptyList()
+//                : users.stream().map(BaseEntity::getId).toList();
+//        List<Integer> restaurantIds = restaurants == null ? Collections.emptyList()
+//                : restaurants.stream().map(BaseEntity::getId).toList();
         if (userIds.isEmpty() && restaurantIds.isEmpty()) {
             return voteRepository.getByDate(startDate, endDate);
         } else if (userIds.isEmpty()) {

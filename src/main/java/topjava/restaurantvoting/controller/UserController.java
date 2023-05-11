@@ -1,14 +1,15 @@
 package topjava.restaurantvoting.controller;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.DateUtil;
-import topjava.restaurantvoting.ValidationUtil;
+import topjava.restaurantvoting.utils.DateUtil;
+import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.model.*;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
@@ -40,9 +41,13 @@ public class UserController {
         return authUser.getUser();
     }
 
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@AuthenticationPrincipal AuthUser authUser){userRepository.deleteById(authUser.id());}
+
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@AuthenticationPrincipal AuthUser authUser, @RequestBody User updated) {
+    public void update(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody User updated) {
         User oldUser = authUser.getUser();
         ValidationUtil.assureIdConsistent(updated, oldUser.id());
         if (updated.getPassword() == null) {
@@ -53,7 +58,7 @@ public class UserController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> create(@RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
         ValidationUtil.checkNew(user);
         user.setRoles(Set.of(Role.USER));
         User created = userRepository.save(user);
@@ -76,27 +81,25 @@ public class UserController {
     }
 
     @PostMapping(value = "/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> vote(@AuthenticationPrincipal AuthUser authUser, @RequestBody Vote vote) {
-        ValidationUtil.checkNew(vote);
-        ValidationUtil.assureIdConsistent(vote.getUser(), authUser.id());
-        ValidationUtil.assureVoteDate(vote);
+    public ResponseEntity<Vote> vote(@AuthenticationPrincipal AuthUser authUser, @RequestParam Integer restaurantId) {
+        Vote vote = new Vote(null,LocalDate.now(),authUser.getUser(),null);
         Vote current = voteRepository.getTodayByUser(authUser.id());
         if (current == null) {
+            vote.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow());
             Vote actual = voteRepository.save(vote);
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path(CURRENT_URL + "/vote/{id}")
                     .buildAndExpand(actual.getId()).toUri();
             return ResponseEntity.created(uriOfNewResource).body(actual);
         } else {
-            vote.setId(current.getId());
-            return changeVote(authUser, vote);
+            return changeVote(authUser, current.getId(),current.getRestaurant().getId());
         }
     }
 
-    @PutMapping(value = "/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> changeVote(@AuthenticationPrincipal AuthUser authUser, @RequestBody Vote vote) {
-        ValidationUtil.assureIdConsistent(vote.getUser(), authUser.id());
-        ValidationUtil.assureVoteDate(vote);
+    @PutMapping(value = "/vote/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Vote> changeVote(@AuthenticationPrincipal AuthUser authUser, @PathVariable Integer id, @RequestParam Integer restaurantId) {
+        Vote current = voteRepository.findById(id).orElseThrow();
+        Vote vote = new Vote(current.getId(),LocalDate.now(),authUser.getUser(),current.getRestaurant());
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
             Vote actual = voteRepository.save(vote);
             return ResponseEntity.ok(actual);

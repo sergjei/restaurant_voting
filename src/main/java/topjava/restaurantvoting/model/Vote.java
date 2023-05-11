@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import org.springframework.format.annotation.DateTimeFormat;
-import topjava.restaurantvoting.VoteCustomDeserializer;
-import topjava.restaurantvoting.VoteCustomSerializer;
+import topjava.restaurantvoting.utils.VoteCustomDeserializer;
+import topjava.restaurantvoting.utils.VoteCustomSerializer;
 
 import java.time.LocalDate;
 

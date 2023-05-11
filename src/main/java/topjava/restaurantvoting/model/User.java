@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
-import topjava.restaurantvoting.PasswordDeserializer;
+import topjava.restaurantvoting.utils.PasswordDeserializer;
 
 import java.io.Serializable;
 import java.util.Collection;

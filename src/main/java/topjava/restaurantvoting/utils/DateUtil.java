@@ -1,4 +1,4 @@
-package topjava.restaurantvoting;
+package topjava.restaurantvoting.utils;
 
 import java.time.LocalDate;
 
