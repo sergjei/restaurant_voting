@@ -4,7 +4,7 @@ package topjava.restaurantvoting;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-import topjava.restaurantvoting.utils.JsonUtil;
+import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -67,6 +67,10 @@ public class MatcherFactory {
 
         public T readFromJson(ResultActions action) throws UnsupportedEncodingException {
             return JsonUtil.readValue(getContent(action.andReturn()), clazz);
+        }
+
+        public List<T> readFromJsonList(ResultActions action) throws UnsupportedEncodingException {
+            return JsonUtil.readValues(getContent(action.andReturn()), clazz);
         }
 
         private static String getContent(MvcResult result) throws UnsupportedEncodingException {

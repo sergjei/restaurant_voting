@@ -2,7 +2,7 @@ package topjava.restaurantvoting;
 
 import topjava.restaurantvoting.model.Role;
 import topjava.restaurantvoting.model.User;
-import topjava.restaurantvoting.utils.JsonUtil;
+import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,17 +16,17 @@ public class UserTestData {
     public static final int ADMIN_ID = 2;
     public static final int USER_2_ID = 3;
     public static final User USER = new User(USER_ID, "Sergey", "Plot", "user@gmail.com", "{noop}password", Role.USER);
-    public static final User ADMIN = new User(ADMIN_ID, "Admin", "Adminsky", "admin@gmail.com", "{noop}admin", Role.ADMIN);
+    public static final User ADMIN = new User(ADMIN_ID, "Admin", "Adminsky", "admin@gmail.com", "{noop}admin", Role.USER, Role.ADMIN);
     public static final User USER_2 = new User(USER_2_ID, "User", "Guestski", "user2@gmail.com", "{noop}guest", Role.USER);
 
-    static {
+    public static User getNew() {
+        return new User(null, "newName", "newLastName", "new@gmail.com", "newPass", Role.USER);
+    }
+
+    public static void setVotes() {
         USER.setVotes(List.of(VoteTestData.VOTE_1));
         ADMIN.setVotes(List.of(VoteTestData.VOTE_2));
         USER_2.setVotes(List.of(VoteTestData.VOTE_3));
-    }
-
-    public static User getNew() {
-        return new User(null, "newName", "newLastName", "new@gmail.com", "newpass", Role.USER);
     }
 
     public static User getUpdated(User old) {
