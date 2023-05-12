@@ -2,11 +2,13 @@ package topjava.restaurantvoting.utils;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import topjava.restaurantvoting.WebSecurityConfig;
 import topjava.restaurantvoting.model.Meal;
 import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.model.User;
 import topjava.restaurantvoting.model.Vote;
+import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.util.List;
 
@@ -21,9 +23,9 @@ import static topjava.restaurantvoting.UserTestData.*;
 import static topjava.restaurantvoting.VoteTestData.VOTE_1;
 import static topjava.restaurantvoting.VoteTestData.VOTE_MATCHER;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@ActiveProfiles("test")
 class JsonUtilTest {
-
     @Test
     void readWriteValueMeal() {
         String json = JsonUtil.writeValue(MEAL_1_R1_YSTRD);
