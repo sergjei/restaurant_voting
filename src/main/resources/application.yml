@@ -7,7 +7,7 @@ spring:
     sql:
       init:
         mode: always
-  #  http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html#configurations
+    #  http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html#configurations
     hibernate:
       ddl-auto: create-drop
       dialect: org.hibernate.dialect.H2Dialect
@@ -21,32 +21,29 @@ spring:
           charSet: UTF-8
         hbm2ddl:
           import_files_sql_extractor: org.hibernate.tool.schema.internal.script.MultiLineSqlScriptExtractor
-
-#        spring.jpa.properties.hibernate.connection.charSet=UTF-8 MultiLineSqlScriptExtractor
-#        spring.jpa.properties.hibernate.hbm2ddl.import_files_sql_extractor=org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
   datasource:
-      # ImMemory
-      url: jdbc:h2:mem:voting
-#      tcp: jdbc:h2:tcp://localhost:9092/mem:voting
-      # Absolute path
-      #    url: jdbc:h2:C:/projects/bootjava/restorant-voting/db/voting
-      #    tcp: jdbc:h2:tcp://localhost:9092/C:/projects/bootjava/restorant-voting/db/voting
-      # Relative path form current dir
-      #    url: jdbc:h2:./db/voting
-      # Relative path from home
-      #    url: jdbc:h2:~/voting
-      #    tcp: jdbc:h2:tcp://localhost:9092/~/voting
-      username: sa
-      password:
+    # ImMemory
+    url: jdbc:h2:mem:voting
+    #      tcp: jdbc:h2:tcp://localhost:9092/mem:voting
+    # Absolute path
+    #    url: jdbc:h2:C:/projects/bootjava/restorant-voting/db/voting
+    #    tcp: jdbc:h2:tcp://localhost:9092/C:/projects/bootjava/restorant-voting/db/voting
+    # Relative path form current dir
+    #    url: jdbc:h2:./db/voting
+    # Relative path from home
+    #    url: jdbc:h2:~/voting
+    #    tcp: jdbc:h2:tcp://localhost:9092/~/voting
+    username: sa
+    password:
   h2:
-      console:
-        path: /h2-console
-        enabled: true
+    console:
+      path: /h2-console
+      enabled: true
   jackson:
-      visibility.field: any
-      visibility.getter: none
-      visibility.setter: none
-      visibility.is-getter: none
+    visibility.field: any
+    visibility.getter: none
+    visibility.setter: none
+    visibility.is-getter: none
 #  security:
 #    user:
 #      name: user
@@ -58,7 +55,7 @@ logging:
     topjava.restaurantvoting: DEBUG
     org.springframework.security.web.FilterChainProxy: DEBUG
 server.servlet:
-    encoding:
-      charset: UTF-
-      enabled: true
-      force: true
+  encoding:
+    charset: UTF-8
+    enabled: true
+    force: true

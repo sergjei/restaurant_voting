@@ -2,6 +2,7 @@ package topjava.restaurantvoting;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -39,17 +40,17 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/rest/profile")
+                        .requestMatchers(HttpMethod.POST, "/rest/profile/register")
+                        .anonymous()
+                        .requestMatchers("/rest/profile/**")
                         .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/rest/admin")
+                        .requestMatchers("/rest/admin/**")
                         .hasAnyRole("ADMIN")
-                        .anyRequest().authenticated()
                 )
                 .httpBasic()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().csrf().disable();
         return http.build();
-
     }
 }
