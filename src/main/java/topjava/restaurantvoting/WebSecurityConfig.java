@@ -20,6 +20,7 @@ import java.util.Optional;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+
     private final UserRepository userRepository;
     public final static PasswordEncoder ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
