@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
-import topjava.restaurantvoting.utils.VoteCustomDeserializer;
-import topjava.restaurantvoting.utils.VoteCustomSerializer;
+import topjava.restaurantvoting.utils.json.VoteCustomDeserializer;
+import topjava.restaurantvoting.utils.json.VoteCustomSerializer;
 
 import java.time.LocalDate;
 
@@ -28,6 +30,7 @@ public class Vote extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "rest_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private Restaurant restaurant;
 

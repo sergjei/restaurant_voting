@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.utils.DateUtil;
-import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.model.*;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.repository.VoteRepository;
+import topjava.restaurantvoting.utils.DateUtil;
+import topjava.restaurantvoting.utils.ValidationUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -43,11 +43,14 @@ public class UserController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@AuthenticationPrincipal AuthUser authUser){userRepository.deleteById(authUser.id());}
+    public void delete(@AuthenticationPrincipal AuthUser authUser) {
+        userRepository.deleteById(authUser.id());
+    }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody User updated) {
+    public void update(@AuthenticationPrincipal AuthUser authUser,
+                       @Valid @RequestBody User updated) {
         User oldUser = authUser.getUser();
         ValidationUtil.assureIdConsistent(updated, oldUser.id());
         if (updated.getPassword() == null) {
@@ -58,7 +61,7 @@ public class UserController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+    public ResponseEntity<User> register(@Valid @RequestBody User user) {
         ValidationUtil.checkNew(user);
         user.setRoles(Set.of(Role.USER));
         User created = userRepository.save(user);
@@ -80,30 +83,31 @@ public class UserController {
                 DateUtil.checkedEndDate(endDate));
     }
 
-    @PostMapping(value = "/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> vote(@AuthenticationPrincipal AuthUser authUser, @RequestParam Integer restaurantId) {
-        Vote vote = new Vote(null,LocalDate.now(),authUser.getUser(),null);
+    @PostMapping(value = "/vote")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Vote> vote(@AuthenticationPrincipal AuthUser authUser, @RequestParam(value = "restId") Integer restId) {
+        Vote vote = new Vote(null, LocalDate.now(), authUser.getUser(), null);
         Vote current = voteRepository.getTodayByUser(authUser.id());
         if (current == null) {
-            vote.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow());
+            vote.setRestaurant(restaurantRepository.findById(restId).orElseThrow());
             Vote actual = voteRepository.save(vote);
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path(CURRENT_URL + "/vote/{id}")
                     .buildAndExpand(actual.getId()).toUri();
             return ResponseEntity.created(uriOfNewResource).body(actual);
         } else {
-            return changeVote(authUser, current.getId(),current.getRestaurant().getId());
+            return changeVote(authUser, current.getId(), current.getRestaurant().getId());
         }
     }
 
-    @PutMapping(value = "/vote/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> changeVote(@AuthenticationPrincipal AuthUser authUser, @PathVariable Integer id, @RequestParam Integer restaurantId) {
+    @PutMapping(value = "/vote/{id}")
+    public ResponseEntity<Vote> changeVote(@AuthenticationPrincipal AuthUser authUser, @PathVariable Integer id, @RequestParam(value = "restId") Integer restId) {
         Vote current = voteRepository.findById(id).orElseThrow();
-        Vote vote = new Vote(current.getId(),LocalDate.now(),authUser.getUser(),current.getRestaurant());
+        Vote vote = new Vote(current.getId(), LocalDate.now(), authUser.getUser(), restaurantRepository.findById(restId).orElseThrow());
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
             Vote actual = voteRepository.save(vote);
             return ResponseEntity.ok(actual);
         }
-        throw new IllegalStateException("Too late to change vote!");
+        return ResponseEntity.status(HttpStatus.LOCKED).body(current);
     }
 }

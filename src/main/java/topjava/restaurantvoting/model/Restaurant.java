@@ -1,10 +1,16 @@
 package topjava.restaurantvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import topjava.restaurantvoting.to.RestaurantTo;
+import topjava.restaurantvoting.utils.ValidationUtil;
+import topjava.restaurantvoting.utils.json.VoteCustomDeserializer;
 
 import java.util.List;
 
@@ -24,12 +30,15 @@ public class Restaurant extends BaseEntity {
     @Size(max = 128)
     private String email;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "restaurant")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OrderBy("menuDate DESC")
     private List<Meal> menu;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OrderBy("voteDate DESC")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonDeserialize(contentUsing = VoteCustomDeserializer.class)
     private List<Vote> votes;
 
     public Restaurant(Integer id, String name, String address, String email, List<Meal> menu) {
@@ -39,12 +48,14 @@ public class Restaurant extends BaseEntity {
         this.email = email;
         this.menu = menu;
     }
+
     public Restaurant(Integer id, String name, String address, String email) {
         super(id);
         this.name = name;
         this.address = address;
         this.email = email;
     }
+
     public Restaurant() {
     }
 
@@ -80,11 +91,22 @@ public class Restaurant extends BaseEntity {
         this.menu = menu;
     }
 
-    public List<Vote> getVote() {
+    public List<Vote> getVotes() {
         return votes;
     }
 
-    public void setVote(List<Vote> votes) {
+    public void setVotes(List<Vote> votes) {
         this.votes = votes;
+    }
+
+    public void updateFromTo(RestaurantTo to) {
+        ValidationUtil.assureIdConsistent(this, to.getId());
+        this.setName(to.getName());
+        this.setAddress(to.getAddress());
+        this.setEmail(to.getEmail());
+    }
+
+    public static Restaurant createFromTo(RestaurantTo to) {
+        return new Restaurant(to.getId(), to.getName(), to.getAddress(), to.getEmail());
     }
 }

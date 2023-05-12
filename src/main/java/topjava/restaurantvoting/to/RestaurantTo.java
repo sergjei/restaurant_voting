@@ -11,23 +11,17 @@ import topjava.restaurantvoting.model.Vote;
 import java.util.List;
 
 public class RestaurantTo extends BaseEntity {
-
     @NotBlank
     private String name;
-
-
     @NotBlank
     private String address;
-
     @Email
     @NotBlank
     @Size(max = 128)
     private String email;
-
     private List<Meal> menu;
-
     @JsonIgnore
-    private List<Vote> vote;
+    private List<Vote> votes;
     private int voteCount;
 
     public RestaurantTo(Integer id, String name, String email, String address, Long voteCount) {
@@ -40,7 +34,6 @@ public class RestaurantTo extends BaseEntity {
 
     public RestaurantTo() {
     }
-
 
     public String getName() {
         return name;
@@ -74,12 +67,12 @@ public class RestaurantTo extends BaseEntity {
         this.menu = menu;
     }
 
-    public List<Vote> getVote() {
-        return vote;
+    public List<Vote> getVotes() {
+        return votes;
     }
 
-    public void setVote(List<Vote> vote) {
-        this.vote = vote;
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
     }
 
     public int getVoteCount() {

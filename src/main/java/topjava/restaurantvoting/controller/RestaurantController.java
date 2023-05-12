@@ -5,10 +5,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.repository.MealRepository;
 import topjava.restaurantvoting.repository.RestaurantRepository;
+import topjava.restaurantvoting.utils.ValidationUtil;
 
 import java.net.URI;
 import java.util.List;
