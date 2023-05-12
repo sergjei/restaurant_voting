@@ -1,4 +1,4 @@
-package topjava.restaurantvoting.utils;
+package topjava.restaurantvoting.utils.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;

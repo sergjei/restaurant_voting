@@ -1,7 +1,6 @@
-package topjava.restaurantvoting.utils;
+package topjava.restaurantvoting.utils.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import topjava.restaurantvoting.model.Vote;
@@ -21,9 +20,11 @@ public class VoteCustomSerializer extends StdSerializer<Vote> {
     @Override
     public void serialize(
             Vote value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         jgen.writeStartObject();
-        jgen.writeNumberField("id", value.getId());
+        if (!value.isNew()) {
+            jgen.writeNumberField("id", value.getId());
+        }
         jgen.writeStringField("voteDate", value.getVoteDate().toString());
         jgen.writeNumberField("user", value.getUser().getId());
         jgen.writeNumberField("restaurant", value.getRestaurant().getId());

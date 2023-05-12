@@ -1,4 +1,4 @@
-package topjava.restaurantvoting.utils;
+package topjava.restaurantvoting.utils.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,5 +62,21 @@ public class JsonUtil {
 
     public static void setMapper(ObjectMapper mapper) {
         JsonUtil.mapper = mapper;
+    }
+
+    public static List<String> jsonToStringList(String json) {
+        if (json.contains("[")) {
+            List<String> result = new ArrayList<>();
+            StringBuilder sb = new StringBuilder(json);
+            while (sb.length() > 1) {
+                int start = sb.indexOf("{");
+                int end = sb.indexOf("}") + 1;
+                result.add(sb.substring(start, end));
+                sb.delete(0, end);
+            }
+            return result;
+        } else {
+            throw new IllegalArgumentException("Invalid input data, must be serialized collection");
+        }
     }
 }

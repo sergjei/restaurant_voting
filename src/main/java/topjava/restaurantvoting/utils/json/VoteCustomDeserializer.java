@@ -1,12 +1,11 @@
-package topjava.restaurantvoting.utils;
+package topjava.restaurantvoting.utils.json;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.node.IntNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.model.User;
 import topjava.restaurantvoting.model.Vote;
@@ -16,11 +15,12 @@ import topjava.restaurantvoting.repository.UserRepository;
 import java.io.IOException;
 import java.time.LocalDate;
 
+@Configurable
 public class VoteCustomDeserializer extends StdDeserializer<Vote> {
     @Autowired
-    UserRepository ur;
+    private UserRepository ur;
     @Autowired
-    RestaurantRepository rr;
+    private RestaurantRepository rr;
 
     public VoteCustomDeserializer() {
         this(null);
@@ -32,9 +32,9 @@ public class VoteCustomDeserializer extends StdDeserializer<Vote> {
 
     @Override
     public Vote deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
-        Integer id = node.has("id") ? (Integer) ((IntNode) node.get("id")).numberValue() : null;
+        Integer id = node.has("id") ? (Integer) (node.get("id")).numberValue() : null;
         LocalDate voteDate = LocalDate.parse(node.get("voteDate").asText());
         User user = ur.findById((Integer) node.get("user").numberValue()).orElseThrow();
         Restaurant restaurant = rr.findById((Integer) node.get("restaurant").numberValue()).orElseThrow();
