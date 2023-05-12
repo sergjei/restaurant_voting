@@ -1,5 +1,6 @@
 package topjava.restaurantvoting.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -33,7 +34,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getUnautherized() throws Exception {
+    void getUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(CURRENT_URL))
                 .andExpect(status().isUnauthorized());
     }
@@ -52,34 +53,39 @@ class RestaurantControllerTest extends AbstractControllerTest {
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(CURRENT_URL + "/{id}", RESTAURANT_ID))
                 .andExpect(status().isNoContent());
-        RESTAURANT_MATCHER.assertMatch(
-                restaurantRepository.findAll(),
-                RESTAURANT_2);
+        RESTAURANT_MATCHER.assertMatch(restaurantRepository.findAll(), RESTAURANT_2);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void update() throws Exception {
-        Restaurant updated = getUpdatedRestaurant(restaurantRepository.findById(RESTAURANT_ID + 1).orElseThrow());
+        Restaurant updated = getUpdatedRestaurant(restaurantRepository.findById(RESTAURANT_ID + 1).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + (RESTAURANT_ID + 1))
+        ));
         perform(MockMvcRequestBuilders.put(CURRENT_URL + "/{id}", RESTAURANT_ID + 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        RESTAURANT_MATCHER.assertMatch(restaurantRepository.findById(RESTAURANT_ID + 1).orElseThrow(), updated);
+        RESTAURANT_MATCHER.assertMatch(restaurantRepository.findById(RESTAURANT_ID + 1).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + (RESTAURANT_ID + 1))
+        ), updated);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void create() throws Exception {
         Restaurant newOne = getNewRestaurant();
-        ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL).contentType(MediaType.APPLICATION_JSON)
+        ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newOne)))
                 .andExpect(status().isCreated())
                 .andDo(print());
         Restaurant created = RESTAURANT_MATCHER.readFromJson(action);
         newOne.setId(created.getId());
         RESTAURANT_MATCHER.assertMatch(created, newOne);
-        RESTAURANT_MATCHER.assertMatch(restaurantRepository.findById(created.getId()).orElseThrow(), newOne);
+        RESTAURANT_MATCHER.assertMatch(restaurantRepository.findById(created.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + created.getId())
+        ), newOne);
     }
 }

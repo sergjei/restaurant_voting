@@ -1,6 +1,7 @@
 package topjava.restaurantvoting.controller;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,12 +45,14 @@ public class AdminController {
 
     @GetMapping("/users/{id}")
     public User get(@PathVariable Integer id) {
-        return userRepository.findById(id).orElseThrow();
+        return userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find user with  id = " + id));
     }
 
     @GetMapping("/users/by_email")
     public User getUserByEmail(@RequestParam String email) {
-        return userRepository.findByEmailIgnoreCase(email).orElseThrow();
+        return userRepository.findByEmailIgnoreCase(email).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find user with  email = " + email));
     }
 
     @PutMapping(value = "/users/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -83,7 +86,8 @@ public class AdminController {
         startDate = DateUtil.checkedStartDateOrMin(startDate);
         endDate = DateUtil.checkedEndDate(endDate);
         List<Integer> userIds = users == null ? Collections.emptyList() : JsonUtil.readValues(users, Integer.class);
-        List<Integer> restaurantIds = restaurants == null ? Collections.emptyList() : JsonUtil.readValues(restaurants, Integer.class);
+        List<Integer> restaurantIds = restaurants == null ? Collections.emptyList() :
+                JsonUtil.readValues(restaurants, Integer.class);
         if (userIds.isEmpty() && restaurantIds.isEmpty()) {
             return voteRepository.getByDate(startDate, endDate);
         } else if (userIds.isEmpty()) {

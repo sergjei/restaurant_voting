@@ -1,5 +1,7 @@
 package topjava.restaurantvoting.utils;
 
+import org.springframework.core.NestedExceptionUtils;
+import org.springframework.lang.NonNull;
 import topjava.restaurantvoting.IllegalRequestDataException;
 import topjava.restaurantvoting.model.BaseEntity;
 
@@ -9,7 +11,6 @@ public class ValidationUtil {
             throw new IllegalRequestDataException(entity.getClass().getSimpleName() + "must be new (id = null)");
         }
     }
-
     public static void assureIdConsistent(BaseEntity entity, int id) {
         if (entity.isNew()) {
             entity.setId(id);
@@ -18,5 +19,9 @@ public class ValidationUtil {
             throw new IllegalRequestDataException(entity.getClass().getSimpleName() + "must have id of authorize user (" + id + ")");
         }
     }
-
+    @NonNull
+    public static Throwable getRootCause(@NonNull Throwable t) {
+        Throwable rootCause = NestedExceptionUtils.getRootCause(t);
+        return rootCause != null ? rootCause : t;
+    }
 }

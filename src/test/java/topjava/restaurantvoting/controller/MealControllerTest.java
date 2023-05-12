@@ -1,5 +1,6 @@
 package topjava.restaurantvoting.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -72,12 +73,17 @@ class MealControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void update() throws Exception {
-        Meal updated = getUpdatedMeal(mealRepository.findById(MEAL_ID).orElseThrow());
+        Meal updated = getUpdatedMeal(mealRepository.findById(MEAL_ID).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find meal with  id = " + MEAL_ID)
+        ));
         perform(MockMvcRequestBuilders.put(CURRENT_URL + "/{id}", RESTAURANT_ID, MEAL_ID)
-                .contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(updated)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        MEAL_MATCHER.assertMatch(mealRepository.findById(MEAL_ID).orElseThrow(), updated);
+        MEAL_MATCHER.assertMatch(mealRepository.findById(MEAL_ID).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find meal with  id = " + MEAL_ID)
+        ), updated);
     }
 
     @Test
@@ -85,7 +91,8 @@ class MealControllerTest extends AbstractControllerTest {
     void createOne() throws Exception {
         Meal newOne = getNewMeal();
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL, RESTAURANT_ID)
-                .contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(newOne)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newOne)))
                 .andExpect(status().isCreated())
                 .andDo(print());
         Meal created = MEAL_MATCHER.readFromJson(action);
@@ -93,7 +100,9 @@ class MealControllerTest extends AbstractControllerTest {
         newOne.setId(id);
         System.out.println(JsonUtil.writeValue(List.of(MEAL_1_R1_YSTRD, MEAL_2_R1_YSTRD)));
         MEAL_MATCHER.assertMatch(created, newOne);
-        MEAL_MATCHER.assertMatch(mealRepository.findById(id).orElseThrow(), newOne);
+        MEAL_MATCHER.assertMatch(mealRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find meal with  id = " + id)
+        ), newOne);
     }
 
     @Test
@@ -101,7 +110,8 @@ class MealControllerTest extends AbstractControllerTest {
     void setNewMenu() throws Exception {
         List<Meal> newMenu = getTomorrowMeals();
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/updateMenu", RESTAURANT_ID)
-                .contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(newMenu)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newMenu)))
                 .andExpect(status().isCreated())
                 .andDo(print());
         List<Meal> created = MEAL_MATCHER.readFromJsonList(action);

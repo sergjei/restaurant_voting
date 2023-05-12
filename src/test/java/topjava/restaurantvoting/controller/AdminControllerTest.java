@@ -1,5 +1,6 @@
 package topjava.restaurantvoting.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -58,7 +59,8 @@ class AdminControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_EMAIL)
     void getUserByEmail() throws Exception {
-        perform(MockMvcRequestBuilders.get(CURRENT_URL_USERS + "/by_email").param("email", USER_2.getEmail()))
+        perform(MockMvcRequestBuilders.get(CURRENT_URL_USERS + "/by_email")
+                .param("email", USER_2.getEmail()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_MATCHER.contentJson(USER_2));
@@ -67,12 +69,16 @@ class AdminControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_EMAIL)
     void update() throws Exception {
-        User updated = getUpdated(userRepository.findByEmailIgnoreCase(USER_2_EMAIL).orElseThrow());
+        User updated = getUpdated(userRepository.findByEmailIgnoreCase(USER_2_EMAIL).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find user with  email = " + USER_2_EMAIL)
+        ));
         String json = JsonUtil.writeAdditionProp(updated, "password", "updatedPass");
         perform(MockMvcRequestBuilders.put(CURRENT_URL_USERS + "/{id}", USER_2_ID).contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isNoContent());
-        USER_MATCHER.assertMatch(userRepository.findByEmailIgnoreCase("updated@gmail.com").orElseThrow(), updated);
+        USER_MATCHER.assertMatch(userRepository.findByEmailIgnoreCase(updated.getEmail()).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find user with  email = " + updated.getEmail())
+        ), updated);
     }
 
     @Test
@@ -88,7 +94,9 @@ class AdminControllerTest extends AbstractControllerTest {
         User created = USER_MATCHER.readFromJson(action);
         newOne.setId(created.getId());
         USER_MATCHER.assertMatch(created, newOne);
-        USER_MATCHER.assertMatch(userRepository.findById(created.getId()).orElseThrow(), newOne);
+        USER_MATCHER.assertMatch(userRepository.findById(created.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find user with  id = " + created.getId())
+        ), newOne);
     }
 
     @Test

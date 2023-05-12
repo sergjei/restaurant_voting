@@ -1,6 +1,7 @@
 package topjava.restaurantvoting.controller;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,7 +44,8 @@ public class MealController {
 
     @GetMapping("/{id}")
     public Meal get(@PathVariable("id") Integer mealId, @PathVariable("rest_id") Integer restId) {
-        Meal meal = mealRepository.findById(mealId).orElseThrow();
+        Meal meal = mealRepository.findById(mealId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find meal with  id = " + mealId));
         ValidationUtil.assureIdConsistent(meal.getRestaurant(), restId);
         return meal;
     }
@@ -51,7 +53,8 @@ public class MealController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") Integer mealId, @PathVariable("rest_id") Integer restId) {
-        Meal meal = mealRepository.findById(mealId).orElseThrow();
+        Meal meal = mealRepository.findById(mealId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find meal with  id = " + mealId));
         ValidationUtil.assureIdConsistent(meal.getRestaurant(), restId);
         mealRepository.deleteById(mealId);
     }
@@ -59,7 +62,7 @@ public class MealController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable("id") Integer mealId, @PathVariable("rest_id") Integer restId,
-                       @RequestBody Meal updated) {
+                       @Valid @RequestBody Meal updated) {
         ValidationUtil.assureIdConsistent(updated, mealId);
         ValidationUtil.assureIdConsistent(updated.getRestaurant(), restId);
         mealRepository.save(updated);
@@ -71,7 +74,9 @@ public class MealController {
                                        @Valid @RequestBody Meal meal) {
         ValidationUtil.checkNew(meal);
         if (meal.getRestaurant() == null) {
-            meal.setRestaurant(restaurantRepository.findById(restId).orElseThrow());
+            meal.setRestaurant(restaurantRepository.findById(restId).orElseThrow(
+                    () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
+            ));
         } else {
             ValidationUtil.assureIdConsistent(meal.getRestaurant(), restId);
         }

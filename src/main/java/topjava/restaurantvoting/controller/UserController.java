@@ -1,6 +1,7 @@
 package topjava.restaurantvoting.controller;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -78,18 +79,22 @@ public class UserController {
 
     @GetMapping("/vote")
     public List<Vote> getVotes(@AuthenticationPrincipal AuthUser authUser,
-                               @RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate) {
+                               @RequestParam @Nullable LocalDate startDate,
+                               @RequestParam @Nullable LocalDate endDate) {
         return voteRepository.getByDateAndUser(List.of(authUser.id()), DateUtil.checkedStartDateOrMin(startDate),
                 DateUtil.checkedEndDate(endDate));
     }
 
     @PostMapping(value = "/vote")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Vote> vote(@AuthenticationPrincipal AuthUser authUser, @RequestParam(value = "restId") Integer restId) {
+    public ResponseEntity<Vote> vote(@AuthenticationPrincipal AuthUser authUser,
+                                     @RequestParam(value = "restId") Integer restId) {
         Vote vote = new Vote(null, LocalDate.now(), authUser.getUser(), null);
         Vote current = voteRepository.getTodayByUser(authUser.id());
         if (current == null) {
-            vote.setRestaurant(restaurantRepository.findById(restId).orElseThrow());
+            vote.setRestaurant(restaurantRepository.findById(restId).orElseThrow(
+                    () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
+            ));
             Vote actual = voteRepository.save(vote);
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path(CURRENT_URL + "/vote/{id}")
@@ -101,9 +106,15 @@ public class UserController {
     }
 
     @PutMapping(value = "/vote/{id}")
-    public ResponseEntity<Vote> changeVote(@AuthenticationPrincipal AuthUser authUser, @PathVariable Integer id, @RequestParam(value = "restId") Integer restId) {
-        Vote current = voteRepository.findById(id).orElseThrow();
-        Vote vote = new Vote(current.getId(), LocalDate.now(), authUser.getUser(), restaurantRepository.findById(restId).orElseThrow());
+    public ResponseEntity<Vote> changeVote(@AuthenticationPrincipal AuthUser authUser,
+                                           @PathVariable Integer id, @RequestParam(value = "restId") Integer restId) {
+        Vote current = voteRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find vote with  id = " + id)
+        );
+        Vote vote = new Vote(current.getId(), LocalDate.now(), authUser.getUser(),
+                restaurantRepository.findById(restId).orElseThrow(
+                        () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
+                ));
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
             Vote actual = voteRepository.save(vote);
             return ResponseEntity.ok(actual);
