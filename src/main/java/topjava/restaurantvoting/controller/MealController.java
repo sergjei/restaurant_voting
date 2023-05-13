@@ -1,5 +1,8 @@
 package topjava.restaurantvoting.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -11,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import topjava.restaurantvoting.model.Meal;
 import topjava.restaurantvoting.repository.MealRepository;
 import topjava.restaurantvoting.repository.RestaurantRepository;
+import topjava.restaurantvoting.to.MealTo;
 import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
@@ -34,20 +38,20 @@ public class MealController {
     }
 
     @GetMapping
-    public List<Meal> getAllByDate(@PathVariable("rest_id") Integer restId,
-                                   @RequestParam(value = "startDate") @Nullable LocalDate startDate,
-                                   @RequestParam(value = "endDate") @Nullable LocalDate endDate) {
-        return mealRepository.getByRestaurantAndDateInclusive(restId,
+    public List<MealTo> getAllByDate(@PathVariable("rest_id") Integer restId,
+                                     @RequestParam(value = "startDate") @Nullable LocalDate startDate,
+                                     @RequestParam(value = "endDate") @Nullable LocalDate endDate) {
+        return MealTo.getListTos(mealRepository.getByRestaurantAndDateInclusive(restId,
                 DateUtil.checkedStartDateOrMin(startDate),
-                DateUtil.checkedEndDate(endDate));
+                DateUtil.checkedEndDate(endDate)));
     }
 
     @GetMapping("/{id}")
-    public Meal get(@PathVariable("id") Integer mealId, @PathVariable("rest_id") Integer restId) {
+    public MealTo get(@PathVariable("id") Integer mealId, @PathVariable("rest_id") Integer restId) {
         Meal meal = mealRepository.findById(mealId).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find meal with  id = " + mealId));
-        ValidationUtil.assureIdConsistent(meal.getRestaurant(), restId);
-        return meal;
+        ValidationUtil.assureIdConsistentRest(meal.getRestaurant(), restId);
+        return MealTo.createFrom(meal);
     }
 
     @DeleteMapping("/{id}")
@@ -55,47 +59,54 @@ public class MealController {
     public void delete(@PathVariable("id") Integer mealId, @PathVariable("rest_id") Integer restId) {
         Meal meal = mealRepository.findById(mealId).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find meal with  id = " + mealId));
-        ValidationUtil.assureIdConsistent(meal.getRestaurant(), restId);
+        ValidationUtil.assureIdConsistentRest(meal.getRestaurant(), restId);
         mealRepository.deleteById(mealId);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable("id") Integer mealId, @PathVariable("rest_id") Integer restId,
-                       @Valid @RequestBody Meal updated) {
-        ValidationUtil.assureIdConsistent(updated, mealId);
-        ValidationUtil.assureIdConsistent(updated.getRestaurant(), restId);
+                       @Valid @RequestBody MealTo updatedTo) {
+        Meal updated = new Meal();
+        updated.updateFromToNoRest(updatedTo);
+        ValidationUtil.assureIdConsistentDef(updated, mealId);
+        updated.setRestaurant(restaurantRepository.findById(updatedTo.getRestaurant()).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + updatedTo.getRestaurant())
+        ));
+        ValidationUtil.assureIdConsistentRest(updated.getRestaurant(), restId);
         mealRepository.save(updated);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Meal> create(@PathVariable("rest_id") Integer restId,
-                                       @Valid @RequestBody Meal meal) {
+    public ResponseEntity<MealTo> create(@PathVariable("rest_id") Integer restId,
+                                         @Valid @RequestBody MealTo mealTo) {
+        Meal meal = new Meal();
+        meal.updateFromToNoRest(mealTo);
         ValidationUtil.checkNew(meal);
-        if (meal.getRestaurant() == null) {
-            meal.setRestaurant(restaurantRepository.findById(restId).orElseThrow(
-                    () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
-            ));
-        } else {
-            ValidationUtil.assureIdConsistent(meal.getRestaurant(), restId);
-        }
+        meal.setRestaurant(restaurantRepository.findById(mealTo.getRestaurant()).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + mealTo.getRestaurant())
+        ));
+        ValidationUtil.assureIdConsistentRest(meal.getRestaurant(), restId);
         Meal created = mealRepository.save(meal);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(CURRENT_URL + "/{id}")
                 .buildAndExpand(restId, created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return ResponseEntity.created(uriOfNewResource).body(MealTo.createFrom(created));
     }
 
     @PostMapping(value = "/updateMenu", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<List<Meal>> updateMenu(@PathVariable("rest_id") Integer restId,
-                                                 @RequestBody String json) {
+    public ResponseEntity<List<MealTo>> updateMenu(@PathVariable("rest_id") Integer restId,
+                                                   @Parameter(description = "List of meals with restaurant replaced by its id",
+                                                           required = true,
+                                                           array = @ArraySchema(schema = @Schema(implementation = MealTo.class)))
+                                                   @RequestBody String json) {
         List<String> jsonMeals = JsonUtil.jsonToStringList(json);
-        List<Meal> meals = new ArrayList<>();
+        List<MealTo> meals = new ArrayList<>();
         for (String jsonMeal : jsonMeals) {
-            Meal meal = JsonUtil.readValue(jsonMeal, Meal.class);
-            meals.add(create(restId, meal).getBody());
+            MealTo mealTo = MealTo.createFrom(JsonUtil.readValue(jsonMeal, Meal.class));
+            meals.add(create(restId, mealTo).getBody());
         }
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(CURRENT_URL)

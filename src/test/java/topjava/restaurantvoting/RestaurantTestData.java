@@ -1,11 +1,13 @@
 package topjava.restaurantvoting;
 
 import topjava.restaurantvoting.model.Restaurant;
+import topjava.restaurantvoting.to.RestaurantTo;
 
 import java.util.List;
 
 public class RestaurantTestData {
     public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class, "votes", "menu");
+    public static final MatcherFactory.Matcher<RestaurantTo> RESTAURANT_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(RestaurantTo.class);
     public static final int RESTAURANT_ID = 1;
     public static final Restaurant RESTAURANT_1 = new Restaurant(RESTAURANT_ID, "Bistro", "French str", "bistro@gmail.com");
     public static final Restaurant RESTAURANT_2 = new Restaurant(RESTAURANT_ID + 1, "NeedForFood", "Belfast str", "fastfood@gmail.com");

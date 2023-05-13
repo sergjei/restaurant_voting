@@ -1,6 +1,7 @@
 package topjava.restaurantvoting;
 
 import topjava.restaurantvoting.model.Vote;
+import topjava.restaurantvoting.to.VoteTo;
 
 import java.time.LocalDate;
 
@@ -10,6 +11,7 @@ import static topjava.restaurantvoting.UserTestData.*;
 
 public class VoteTestData {
     public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "user", "restaurant");
+    public static final MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class);
     public static final int VOTE_ID = 1;
     public static final Vote VOTE_1 = new Vote(VOTE_ID, LocalDate.now().minusDays(1), USER, RESTAURANT_1);
     public static final Vote VOTE_2 = new Vote(VOTE_ID + 1, LocalDate.now().minusDays(1), ADMIN, RESTAURANT_2);

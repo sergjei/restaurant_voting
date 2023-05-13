@@ -7,8 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.repository.RestaurantRepository;
+import topjava.restaurantvoting.to.RestaurantTo;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.util.List;
@@ -27,10 +27,11 @@ class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void getAll() throws Exception {
+        List<RestaurantTo> expected = RestaurantTo.getListTos(List.of(RESTAURANT_1, RESTAURANT_2));
         perform(MockMvcRequestBuilders.get(CURRENT_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(List.of(RESTAURANT_1, RESTAURANT_2)));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(expected));
     }
 
     @Test
@@ -42,10 +43,10 @@ class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/{id}", RESTAURANT_ID + 1))
+        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/{id}", RESTAURANT_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(RESTAURANT_2));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(RestaurantTo.createFrom(RESTAURANT_1)));
     }
 
     @Test
@@ -59,33 +60,33 @@ class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void update() throws Exception {
-        Restaurant updated = getUpdatedRestaurant(restaurantRepository.findById(RESTAURANT_ID + 1).orElseThrow(
+        RestaurantTo updated = RestaurantTo.createFrom(getUpdatedRestaurant(restaurantRepository.findById(RESTAURANT_ID + 1).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find restaurant with  id = " + (RESTAURANT_ID + 1))
-        ));
+        )));
         perform(MockMvcRequestBuilders.put(CURRENT_URL + "/{id}", RESTAURANT_ID + 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        RESTAURANT_MATCHER.assertMatch(restaurantRepository.findById(RESTAURANT_ID + 1).orElseThrow(
+        RESTAURANT_TO_MATCHER.assertMatch(RestaurantTo.createFrom(restaurantRepository.findById(RESTAURANT_ID + 1).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find restaurant with  id = " + (RESTAURANT_ID + 1))
-        ), updated);
+        )), updated);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void create() throws Exception {
-        Restaurant newOne = getNewRestaurant();
+        RestaurantTo newOne = RestaurantTo.createFrom(getNewRestaurant());
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newOne)))
                 .andExpect(status().isCreated())
                 .andDo(print());
-        Restaurant created = RESTAURANT_MATCHER.readFromJson(action);
+        RestaurantTo created = RESTAURANT_TO_MATCHER.readFromJson(action);
         newOne.setId(created.getId());
-        RESTAURANT_MATCHER.assertMatch(created, newOne);
-        RESTAURANT_MATCHER.assertMatch(restaurantRepository.findById(created.getId()).orElseThrow(
+        RESTAURANT_TO_MATCHER.assertMatch(created, newOne);
+        RESTAURANT_TO_MATCHER.assertMatch(RestaurantTo.createFrom(restaurantRepository.findById(created.getId()).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find restaurant with  id = " + created.getId())
-        ), newOne);
+        )), newOne);
     }
 }

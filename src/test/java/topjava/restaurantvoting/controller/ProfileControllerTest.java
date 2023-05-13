@@ -10,8 +10,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import topjava.restaurantvoting.RestaurantTestData;
 import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.model.User;
-import topjava.restaurantvoting.model.Vote;
 import topjava.restaurantvoting.repository.UserRepository;
+import topjava.restaurantvoting.to.VoteTo;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.time.LocalTime;
@@ -26,7 +26,7 @@ import static topjava.restaurantvoting.RestaurantTestData.*;
 import static topjava.restaurantvoting.UserTestData.*;
 import static topjava.restaurantvoting.VoteTestData.*;
 
-class UserControllerTest extends AbstractControllerTest {
+class ProfileControllerTest extends AbstractControllerTest {
     public static final String CURRENT_URL = "/rest/profile";
     @Autowired
     private UserRepository userRepository;
@@ -55,10 +55,10 @@ class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_EMAIL)
+    @WithUserDetails(value = USER_2_EMAIL)
     void update() throws Exception {
-        User updated = getUpdated(userRepository.findByEmailIgnoreCase(USER_EMAIL).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find user with  email = " + USER_EMAIL)
+        User updated = getUpdated(userRepository.findByEmailIgnoreCase(USER_2_EMAIL).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find user with  email = " + USER_2_EMAIL)
         ));
         String json = JsonUtil.writeAdditionProp(updated, "password", "updatedPass");
         perform(MockMvcRequestBuilders.put(CURRENT_URL)
@@ -109,11 +109,11 @@ class UserControllerTest extends AbstractControllerTest {
         ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        List<Vote> actual = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), Vote.class);
+        List<VoteTo> actual = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), VoteTo.class);
         assertEquals(1, actual.size());
-        VOTE_MATCHER.assertMatch(actual, VOTE_2);
-        RESTAURANT_MATCHER.assertMatch(actual.get(0).getRestaurant(), RESTAURANT_2);
-        USER_MATCHER.assertMatch(actual.get(0).getUser(), ADMIN);
+        VOTE_TO_MATCHER.assertMatch(actual, VoteTo.createFrom(VOTE_2));
+        assertEquals(actual.get(0).getRestaurantId(), RESTAURANT_ID + 1);
+        assertEquals(actual.get(0).getUserId(), ADMIN_ID);
     }
 
     @Test
@@ -124,10 +124,10 @@ class UserControllerTest extends AbstractControllerTest {
                 .param("restId", "1"))
                 .andDo(print())
                 .andExpect(status().isCreated());
-        Vote created = VOTE_MATCHER.readFromJson(action);
-        Vote newOne = getNewVote();
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
+        VoteTo newOne = VoteTo.createFrom(getNewVote());
         newOne.setId(created.getId());
-        VOTE_MATCHER.assertMatch(created, newOne);
+        VOTE_TO_MATCHER.assertMatch(created, newOne);
     }
 
     @Test
@@ -138,15 +138,17 @@ class UserControllerTest extends AbstractControllerTest {
                 .param("restId", "1"))
                 .andDo(print())
                 .andExpect(status().isCreated());
-        Vote created = VOTE_MATCHER.readFromJson(actionCreate);
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(actionCreate);
         ResultActions actionUpdate = perform(MockMvcRequestBuilders.put(CURRENT_URL + "/vote/{id}", created.getId())
                 .param("restId", "2"))
                 .andDo(print());
-        Vote updated = VOTE_MATCHER.readFromJson(actionUpdate);
+        VoteTo updated = VOTE_TO_MATCHER.readFromJson(actionUpdate);
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
-            created.setRestaurant(RESTAURANT_2);
+            created.setRestaurantId(RESTAURANT_ID + 1);
+            VOTE_TO_MATCHER.assertMatch(updated, created);
+        } else {
+            VOTE_TO_MATCHER.assertMatch(updated, new VoteTo());
         }
-        VOTE_MATCHER.assertMatch(updated, created);
     }
 
     @Test

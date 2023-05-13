@@ -9,10 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import topjava.restaurantvoting.IllegalRequestTimeException;
 import topjava.restaurantvoting.model.*;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.repository.VoteRepository;
+import topjava.restaurantvoting.to.VoteTo;
 import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
 
@@ -23,15 +25,15 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = UserController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserController {
+@RequestMapping(value = ProfileController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class ProfileController {
 
     public static final String CURRENT_URL = "/rest/profile";
     public UserRepository userRepository;
     public RestaurantRepository restaurantRepository;
     public VoteRepository voteRepository;
 
-    public UserController(UserRepository userRepository, RestaurantRepository restaurantRepository, VoteRepository voteRepository) {
+    public ProfileController(UserRepository userRepository, RestaurantRepository restaurantRepository, VoteRepository voteRepository) {
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
         this.voteRepository = voteRepository;
@@ -78,17 +80,18 @@ public class UserController {
     }
 
     @GetMapping("/vote")
-    public List<Vote> getVotes(@AuthenticationPrincipal AuthUser authUser,
-                               @RequestParam @Nullable LocalDate startDate,
-                               @RequestParam @Nullable LocalDate endDate) {
-        return voteRepository.getByDateAndUser(List.of(authUser.id()), DateUtil.checkedStartDateOrMin(startDate),
-                DateUtil.checkedEndDate(endDate));
+    public List<VoteTo> getVotes(@AuthenticationPrincipal AuthUser authUser,
+                                 @RequestParam @Nullable LocalDate startDate,
+                                 @RequestParam @Nullable LocalDate endDate) {
+        return VoteTo.getListTos(voteRepository.getByDateAndUser(List.of(authUser.id()),
+                DateUtil.checkedStartDateOrMin(startDate),
+                DateUtil.checkedEndDate(endDate)));
     }
 
     @PostMapping(value = "/vote")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Vote> vote(@AuthenticationPrincipal AuthUser authUser,
-                                     @RequestParam(value = "restId") Integer restId) {
+    public ResponseEntity<VoteTo> vote(@AuthenticationPrincipal AuthUser authUser,
+                                       @RequestParam(value = "restId") Integer restId) {
         Vote vote = new Vote(null, LocalDate.now(), authUser.getUser(), null);
         Vote current = voteRepository.getTodayByUser(authUser.id());
         if (current == null) {
@@ -99,15 +102,15 @@ public class UserController {
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path(CURRENT_URL + "/vote/{id}")
                     .buildAndExpand(actual.getId()).toUri();
-            return ResponseEntity.created(uriOfNewResource).body(actual);
+            return ResponseEntity.created(uriOfNewResource).body(VoteTo.createFrom(actual));
         } else {
             return changeVote(authUser, current.getId(), current.getRestaurant().getId());
         }
     }
 
     @PutMapping(value = "/vote/{id}")
-    public ResponseEntity<Vote> changeVote(@AuthenticationPrincipal AuthUser authUser,
-                                           @PathVariable Integer id, @RequestParam(value = "restId") Integer restId) {
+    public ResponseEntity<VoteTo> changeVote(@AuthenticationPrincipal AuthUser authUser,
+                                             @PathVariable Integer id, @RequestParam(value = "restId") Integer restId) {
         Vote current = voteRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find vote with  id = " + id)
         );
@@ -117,8 +120,8 @@ public class UserController {
                 ));
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
             Vote actual = voteRepository.save(vote);
-            return ResponseEntity.ok(actual);
+            return ResponseEntity.ok(VoteTo.createFrom(actual));
         }
-        return ResponseEntity.status(HttpStatus.LOCKED).body(current);
+        throw new IllegalRequestTimeException("Vote can be changed only before 11 AM");
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import topjava.restaurantvoting.model.Meal;
 import topjava.restaurantvoting.repository.MealRepository;
+import topjava.restaurantvoting.to.MealTo;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.time.LocalDate;
@@ -89,37 +90,38 @@ class MealControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void createOne() throws Exception {
-        Meal newOne = getNewMeal();
+        MealTo newOne = MealTo.createFrom(getNewMeal());
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL, RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newOne)))
                 .andExpect(status().isCreated())
                 .andDo(print());
-        Meal created = MEAL_MATCHER.readFromJson(action);
+        MealTo created = MEAL_TO_MATCHER.readFromJson(action);
         int id = created.getId();
         newOne.setId(id);
-        System.out.println(JsonUtil.writeValue(List.of(MEAL_1_R1_YSTRD, MEAL_2_R1_YSTRD)));
-        MEAL_MATCHER.assertMatch(created, newOne);
-        MEAL_MATCHER.assertMatch(mealRepository.findById(id).orElseThrow(
+        MEAL_TO_MATCHER.assertMatch(created, newOne);
+        MEAL_TO_MATCHER.assertMatch(MealTo.createFrom(mealRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find meal with  id = " + id)
-        ), newOne);
+        )), newOne);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
-    void setNewMenu() throws Exception {
-        List<Meal> newMenu = getTomorrowMeals();
+    void updateMenu() throws Exception {
+        List<MealTo> newMenu = MealTo.getListTos(getTomorrowMeals());
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/updateMenu", RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newMenu)))
                 .andExpect(status().isCreated())
                 .andDo(print());
-        List<Meal> created = MEAL_MATCHER.readFromJsonList(action);
+        List<MealTo> created = MEAL_TO_MATCHER.readFromJsonList(action);
         for (int i = 0; i <= 2; i++) {
             newMenu.get(i).setId(created.get(i).getId());
         }
-        MEAL_MATCHER.assertMatch(created, newMenu);
-        MEAL_MATCHER.assertMatch(mealRepository.getByRestaurantAndDateInclusive(RESTAURANT_ID,
-                LocalDate.now().plusDays(1), LocalDate.now().plusDays(1)), newMenu);
+        System.out.println(JsonUtil.writeValue(newMenu));
+        System.out.println(JsonUtil.writeValue(created));
+        MEAL_TO_MATCHER.assertMatch(created, newMenu);
+        MEAL_TO_MATCHER.assertMatch(MealTo.getListTos(mealRepository.getByRestaurantAndDateInclusive(RESTAURANT_ID,
+                LocalDate.now().plusDays(1), LocalDate.now().plusDays(1))), newMenu);
     }
 }

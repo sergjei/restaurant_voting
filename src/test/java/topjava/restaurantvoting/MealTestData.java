@@ -1,12 +1,16 @@
 package topjava.restaurantvoting;
 
 import topjava.restaurantvoting.model.Meal;
+import topjava.restaurantvoting.to.MealTo;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import static topjava.restaurantvoting.RestaurantTestData.RESTAURANT_1;
+
 public class MealTestData {
     public static final MatcherFactory.Matcher<Meal> MEAL_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Meal.class, "restaurant");
+    public static final MatcherFactory.Matcher<MealTo> MEAL_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(MealTo.class);
     public static final int MEAL_ID = 1;
     public static final Meal MEAL_1_R1_YSTRD = new Meal(MEAL_ID, LocalDate.now().minusDays(1), "Hot-dog", 700);
     public static final Meal MEAL_2_R1_YSTRD = new Meal(MEAL_ID + 1, LocalDate.now().minusDays(1), "pizza", 1200);
@@ -32,13 +36,13 @@ public class MealTestData {
     public static final List<Meal> MENU_TMRW = List.of(MEAL_7_TMRW, MEAL_8_TMRW, MEAL_9_TMRW);
 
     public static Meal getNewMeal() {
-        return new Meal(null, null, LocalDate.now(), "newFood", 666);
+        return new Meal(null, RESTAURANT_1, LocalDate.now(), "newFood", 666);
     }
 
     public static List<Meal> getTomorrowMeals() {
-        return List.of(new Meal(null, null, LocalDate.now().plusDays(1), "porridge with pork", 1700),
-                new Meal(null, null, LocalDate.now().plusDays(1), "pasta with cheese", 900),
-                new Meal(null, null, LocalDate.now().plusDays(1), "fried vegatables", 1200));
+        return List.of(new Meal(null, RESTAURANT_1, LocalDate.now().plusDays(1), "porridge with pork", 1700),
+                new Meal(null, RESTAURANT_1, LocalDate.now().plusDays(1), "pasta with cheese", 900),
+                new Meal(null, RESTAURANT_1, LocalDate.now().plusDays(1), "fried vegatables", 1200));
     }
 
     public static Meal getUpdatedMeal(Meal old) {
