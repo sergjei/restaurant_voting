@@ -10,9 +10,14 @@ import topjava.restaurantvoting.to.RestaurantTo;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @Repository
 @Transactional(readOnly = true)
 public interface VoteRepository extends JpaRepository<Vote, Integer> {
+
+    @Query("SELECT v FROM Vote v WHERE v.voteDate = CURRENT_DATE()")
+    List<Vote> getToday();
+
     @Query("SELECT v FROM Vote v WHERE v.voteDate>=:startDate AND v.voteDate<=:endDate")
     List<Vote> getByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
@@ -29,7 +34,8 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
     @Query("SELECT v FROM Vote v WHERE v.user.id =:userId AND v.voteDate = CURRENT_DATE()")
     Vote getTodayByUser(@Param("userId") Integer userId);
 
-    @Query("SELECT v FROM Vote v WHERE v.user.id IN :userIds AND v.restaurant.id IN :restIds AND v.voteDate>=:startDate AND v.voteDate<=:endDate")
+    @Query("SELECT  v FROM Vote v WHERE v.user.id IN :userIds " +
+            "AND v.restaurant.id IN :restIds AND v.voteDate>=:startDate AND v.voteDate<=:endDate")
     List<Vote> getCustom(@Param("userIds") List<Integer> userIds,
                          @Param("restIds") List<Integer> restIds,
                          @Param("startDate") LocalDate startDate,

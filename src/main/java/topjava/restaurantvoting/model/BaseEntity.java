@@ -1,5 +1,6 @@
 package topjava.restaurantvoting.model;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
@@ -35,6 +36,7 @@ public abstract class BaseEntity implements Persistable<Integer> {
     }
 
     @Override
+    @Hidden
     public boolean isNew() {
         return id == null;
     }

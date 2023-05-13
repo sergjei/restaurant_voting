@@ -1,5 +1,7 @@
 package topjava.restaurantvoting;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
     private final UserRepository userRepository;
     public final static PasswordEncoder ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -31,6 +34,7 @@ public class WebSecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> {
+            log.info("get authorized user");
             Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
             return new AuthUser(optionalUser.orElseThrow(
                     () -> new UsernameNotFoundException("User '" + email + "' was not found")));
@@ -47,6 +51,8 @@ public class WebSecurityConfig {
                         .hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/rest/admin/**")
                         .hasAnyRole("ADMIN")
+                        .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()//https://stackoverflow.com/questions/72316850/swagger-ui-getting-403-error-even-after-adding-resources-in-the-ignored-list-o
+                        .anyRequest().authenticated()
                 )
                 .httpBasic()
                 .and()

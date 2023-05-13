@@ -49,11 +49,21 @@ spring:
 #      name: user
 #      password: password
 #      roles: USER
+  cache:
+    cache-names: users, menu, restaurants
+    caffeine.spec: maximumSize=5000,expireAfterAccess=600s
 logging:
   level:
     root: WARN
     topjava.restaurantvoting: DEBUG
-    org.springframework.security.web.FilterChainProxy: DEBUG
+    org.springframework.security.web.FilterChainProxy: WARN
+    org.hibernate: INFO
+  file:
+    name: application.log
+  pattern:
+    console: "%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p})  %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
 server.servlet:
   encoding:
     charset: UTF-8
