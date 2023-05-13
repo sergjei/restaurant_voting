@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import topjava.restaurantvoting.to.MealTo;
+import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.utils.json.MealCustomDeserializer;
 import topjava.restaurantvoting.utils.json.MealCustomSerializer;
 
@@ -20,7 +22,7 @@ import java.time.LocalDate;
         @Index(name = "restaurant_menu_date", columnList = "menu_date, rest_id")
 })
 public class Meal extends BaseEntity {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rest_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
@@ -85,5 +87,16 @@ public class Meal extends BaseEntity {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public void updateFromToNoRest(MealTo to) {
+        if (!this.isNew()) {
+            ValidationUtil.assureIdConsistentDef(this, to.getId());
+        } else {
+            this.id = to.getId() == null ? null : to.getId();
+        }
+        this.price = to.getPrice();
+        this.description = to.getDescription();
+        this.menuDate = to.getMenuDate();
     }
 }

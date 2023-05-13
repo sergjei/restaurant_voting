@@ -29,7 +29,7 @@ public class Restaurant extends BaseEntity {
     @NotBlank
     @Size(max = 128)
     private String email;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "restaurant")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OrderBy("menuDate DESC")
     private List<Meal> menu;
@@ -107,6 +107,11 @@ public class Restaurant extends BaseEntity {
     }
 
     public static Restaurant createFromTo(RestaurantTo to) {
-        return new Restaurant(to.getId(), to.getName(), to.getAddress(), to.getEmail());
+        Integer id = to.getId() == null ? null : to.getId();
+        return new Restaurant(
+                id,
+                to.getName(),
+                to.getAddress(),
+                to.getEmail());
     }
 }

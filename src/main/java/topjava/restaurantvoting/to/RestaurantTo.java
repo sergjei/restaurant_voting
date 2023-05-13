@@ -1,14 +1,13 @@
 package topjava.restaurantvoting.to;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import topjava.restaurantvoting.model.BaseEntity;
-import topjava.restaurantvoting.model.Meal;
-import topjava.restaurantvoting.model.Vote;
+import topjava.restaurantvoting.model.Restaurant;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RestaurantTo extends BaseEntity {
     @NotBlank
@@ -19,17 +18,14 @@ public class RestaurantTo extends BaseEntity {
     @NotBlank
     @Size(max = 128)
     private String email;
-    private List<Meal> menu;
-    @JsonIgnore
-    private List<Vote> votes;
-    private int voteCount;
+    private Integer voteCount;
 
     public RestaurantTo(Integer id, String name, String email, String address, Long voteCount) {
         super(id);
         this.name = name;
         this.email = email;
         this.address = address;
-        this.voteCount = voteCount.intValue();
+        this.voteCount = voteCount == null ? null : voteCount.intValue();
     }
 
     public RestaurantTo() {
@@ -59,27 +55,19 @@ public class RestaurantTo extends BaseEntity {
         this.email = email;
     }
 
-    public List<Meal> getMenu() {
-        return menu;
-    }
-
-    public void setMenu(List<Meal> menu) {
-        this.menu = menu;
-    }
-
-    public List<Vote> getVotes() {
-        return votes;
-    }
-
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
-    }
-
     public int getVoteCount() {
         return voteCount;
     }
 
     public void setVoteCount(int voteCount) {
         this.voteCount = voteCount;
+    }
+
+    public static RestaurantTo createFrom(Restaurant origin) {
+        return new RestaurantTo(origin.getId(), origin.getName(), origin.getEmail(), origin.getAddress(), null);
+    }
+
+    public static List<RestaurantTo> getListTos(List<Restaurant> restaurants) {
+        return restaurants.stream().map(RestaurantTo::createFrom).collect(Collectors.toList());
     }
 }
