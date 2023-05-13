@@ -79,7 +79,7 @@ public class ProfileController {
         return restaurantRepository.getTodayMenu();
     }
 
-    @GetMapping("/vote")
+    @GetMapping("/votes")
     public List<VoteTo> getVotes(@AuthenticationPrincipal AuthUser authUser,
                                  @RequestParam @Nullable LocalDate startDate,
                                  @RequestParam @Nullable LocalDate endDate) {
@@ -88,7 +88,7 @@ public class ProfileController {
                 DateUtil.checkedEndDate(endDate)));
     }
 
-    @PostMapping(value = "/vote")
+    @PostMapping(value = "/votes")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<VoteTo> vote(@AuthenticationPrincipal AuthUser authUser,
                                        @RequestParam(value = "restId") Integer restId) {
@@ -100,7 +100,7 @@ public class ProfileController {
             ));
             Vote actual = voteRepository.save(vote);
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path(CURRENT_URL + "/vote/{id}")
+                    .path(CURRENT_URL + "/votes/{id}")
                     .buildAndExpand(actual.getId()).toUri();
             return ResponseEntity.created(uriOfNewResource).body(VoteTo.createFrom(actual));
         } else {
@@ -108,7 +108,7 @@ public class ProfileController {
         }
     }
 
-    @PutMapping(value = "/vote/{id}")
+    @PutMapping(value = "/votes/{id}")
     public ResponseEntity<VoteTo> changeVote(@AuthenticationPrincipal AuthUser authUser,
                                              @PathVariable Integer id, @RequestParam(value = "restId") Integer restId) {
         Vote current = voteRepository.findById(id).orElseThrow(

@@ -116,7 +116,7 @@ class AdminControllerTest extends AbstractControllerTest {
         parameters.add("endDate", LocalDate.now().minusDays(1).toString());
         parameters.add("users", List.of(1, 3).toString());
         parameters.add("restaurants", List.of(1).toString());
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote")
+        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
                 .params(parameters))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -126,7 +126,7 @@ class AdminControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_EMAIL)
     void getTodayVotes() throws Exception {
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote/today"))
+        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes/today"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_TO_MATCHER.contentJson(List.of()));
@@ -140,7 +140,7 @@ class AdminControllerTest extends AbstractControllerTest {
         parameters.add("endDate", LocalDate.now().minusDays(1).toString());
         parameters.add("users", List.of(1, 3).toString());
         List<VoteTo> expected = VoteTo.getListTos(List.of(VOTE_1, VOTE_3));
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote")
+        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
                 .params(parameters))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -155,7 +155,7 @@ class AdminControllerTest extends AbstractControllerTest {
         parameters.add("endDate", LocalDate.now().minusDays(1).toString());
         parameters.add("restaurants", List.of(2).toString());
         List<VoteTo> expected = VoteTo.getListTos(List.of(VOTE_2, VOTE_3));
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote")
+        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
                 .params(parameters))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -169,7 +169,7 @@ class AdminControllerTest extends AbstractControllerTest {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("startDate", LocalDate.now().minusDays(1).toString());
         parameters.add("endDate", LocalDate.now().toString());
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote")
+        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
                 .params(parameters))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -180,7 +180,7 @@ class AdminControllerTest extends AbstractControllerTest {
     @WithUserDetails(ADMIN_EMAIL)
     void getVotesDefault() throws Exception {
         List<VoteTo> expected = VoteTo.getListTos(List.of(VOTE_1, VOTE_2, VOTE_3));
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote"))
+        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_TO_MATCHER.contentJson(expected));
@@ -192,7 +192,7 @@ class AdminControllerTest extends AbstractControllerTest {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("startDate", LocalDate.now().minusDays(1).toString());
         parameters.add("endDate", LocalDate.now().minusDays(1).toString());
-        ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote_count")
+        ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes_count")
                 .params(parameters))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));

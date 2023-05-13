@@ -78,7 +78,7 @@ public class AdminController {
         userRepository.deleteById(id);
     }
 
-    @GetMapping("/vote") //return all votes by default
+    @GetMapping("/votes") //return all votes by default
     public List<VoteTo> getVotes(@RequestParam(value = "startDate") @Nullable LocalDate startDate,
                                  @RequestParam(value = "endDate") @Nullable LocalDate endDate,
                                  @RequestParam(value = "users") @Nullable String users,
@@ -99,12 +99,12 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/vote/today")
+    @GetMapping("/votes/today")
     public List<VoteTo> getTodayVotes() {
         return VoteTo.getListTos(voteRepository.getToday());
     }
 
-    @GetMapping("/vote_count")
+    @GetMapping("/votes_count")
     public List<RestaurantTo> getVoteCount(@RequestParam(value = "startDate") @Nullable LocalDate startDate,
                                            @RequestParam(value = "endDate") @Nullable LocalDate endDate) {
         return voteRepository.getVoteCountByRestaurant(DateUtil.checkedStartDateOrToday(startDate),

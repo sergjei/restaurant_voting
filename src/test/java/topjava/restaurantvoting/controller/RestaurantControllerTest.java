@@ -20,7 +20,7 @@ import static topjava.restaurantvoting.RestaurantTestData.*;
 import static topjava.restaurantvoting.UserTestData.ADMIN_EMAIL;
 
 class RestaurantControllerTest extends AbstractControllerTest {
-    public static final String CURRENT_URL = "/rest/admin/restaurant";
+    public static final String CURRENT_URL = "/rest/admin/restaurants";
     @Autowired
     private RestaurantRepository restaurantRepository;
 

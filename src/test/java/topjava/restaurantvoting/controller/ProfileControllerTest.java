@@ -106,7 +106,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     void getVotes() throws Exception {
         setVotes();
         setVotesRest();
-        ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/vote"))
+        ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         List<VoteTo> actual = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), VoteTo.class);
@@ -120,7 +120,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER_EMAIL)
     void vote() throws Exception {
         setVotes();
-        ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/vote")
+        ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/votes")
                 .param("restId", "1"))
                 .andDo(print())
                 .andExpect(status().isCreated());
@@ -134,12 +134,12 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER_EMAIL)
     void changeVote() throws Exception {
         setVotes();
-        ResultActions actionCreate = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/vote")
+        ResultActions actionCreate = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/votes")
                 .param("restId", "1"))
                 .andDo(print())
                 .andExpect(status().isCreated());
         VoteTo created = VOTE_TO_MATCHER.readFromJson(actionCreate);
-        ResultActions actionUpdate = perform(MockMvcRequestBuilders.put(CURRENT_URL + "/vote/{id}", created.getId())
+        ResultActions actionUpdate = perform(MockMvcRequestBuilders.put(CURRENT_URL + "/votes/{id}", created.getId())
                 .param("restId", "2"))
                 .andDo(print());
         VoteTo updated = VOTE_TO_MATCHER.readFromJson(actionUpdate);
