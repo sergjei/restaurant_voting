@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import topjava.restaurantvoting.model.Restaurant;
@@ -36,8 +37,14 @@ public class VoteCustomDeserializer extends StdDeserializer<Vote> {
         JsonNode node = jp.getCodec().readTree(jp);
         Integer id = node.has("id") ? (Integer) (node.get("id")).numberValue() : null;
         LocalDate voteDate = LocalDate.parse(node.get("voteDate").asText());
-        User user = ur.findById((Integer) node.get("user").numberValue()).orElseThrow();
-        Restaurant restaurant = rr.findById((Integer) node.get("restaurant").numberValue()).orElseThrow();
+        Integer userId = node.has("user") ? (Integer) node.get("user").numberValue() : null;
+        User user = ur.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find user with  id = " + userId)
+        );
+        Integer restId = node.has("restaurant") ? (Integer) node.get("restaurant").numberValue() : null;
+        Restaurant restaurant = restId != null ? rr.findById(restId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
+        ) : null;
         return new Vote(id, voteDate, user, restaurant);
     }
 }
