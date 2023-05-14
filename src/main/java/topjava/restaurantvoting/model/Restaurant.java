@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import topjava.restaurantvoting.to.RestaurantTo;
-import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.utils.json.VoteCustomDeserializer;
 
 import java.util.List;
@@ -97,21 +95,5 @@ public class Restaurant extends BaseEntity {
 
     public void setVotes(List<Vote> votes) {
         this.votes = votes;
-    }
-
-    public void updateFromTo(RestaurantTo to) {
-        ValidationUtil.assureIdConsistent(this, to.getId());
-        this.setName(to.getName());
-        this.setAddress(to.getAddress());
-        this.setEmail(to.getEmail());
-    }
-
-    public static Restaurant createFromTo(RestaurantTo to) {
-        Integer id = to.getId() == null ? null : to.getId();
-        return new Restaurant(
-                id,
-                to.getName(),
-                to.getAddress(),
-                to.getEmail());
     }
 }

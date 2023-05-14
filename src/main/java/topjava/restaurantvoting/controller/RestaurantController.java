@@ -7,10 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.repository.MealRepository;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.to.RestaurantTo;
+import topjava.restaurantvoting.utils.RestaurantsUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
 
 import java.net.URI;
@@ -31,12 +31,12 @@ public class RestaurantController {
 
     @GetMapping
     public List<RestaurantTo> getAll() {
-        return RestaurantTo.getListTos(restaurantRepository.findAll());
+        return RestaurantsUtil.getListTos(restaurantRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public RestaurantTo get(@PathVariable Integer id) {
-        return RestaurantTo.createFrom(restaurantRepository.findById(id).orElseThrow(
+        return RestaurantsUtil.createFrom(restaurantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find restaurant with  id = " + id)
         ));
     }
@@ -51,14 +51,14 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Integer id, @Valid @RequestBody RestaurantTo updated) {
         ValidationUtil.assureIdConsistentDef(updated, id);
-        restaurantRepository.save(Restaurant.createFromTo(updated));
+        restaurantRepository.save(RestaurantsUtil.createFromTo(updated));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurant) {
         ValidationUtil.checkNew(restaurant);
-        RestaurantTo created = RestaurantTo.createFrom(restaurantRepository.save(Restaurant.createFromTo(restaurant)));
+        RestaurantTo created = RestaurantsUtil.createFrom(restaurantRepository.save(RestaurantsUtil.createFromTo(restaurant)));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(CURRENT_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();

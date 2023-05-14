@@ -8,8 +8,6 @@ import topjava.restaurantvoting.model.Vote;
 import topjava.restaurantvoting.utils.ValidationUtil;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class VoteTo extends BaseEntity {
 
@@ -63,13 +61,5 @@ public class VoteTo extends BaseEntity {
         this.setVoteDate(origin.getVoteDate());
         this.setUserId(origin.getUser().getId());
         this.setRestaurantId(origin.getRestaurant().getId());
-    }
-
-    public static VoteTo createFrom(Vote origin) {
-        return new VoteTo(origin.getId(), origin.getVoteDate(), origin.getUser().getId(), origin.getRestaurant().getId());
-    }
-
-    public static List<VoteTo> getListTos(List<Vote> votes) {
-        return votes.stream().map((v) -> VoteTo.createFrom(v)).collect(Collectors.toList());
     }
 }

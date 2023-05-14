@@ -12,6 +12,7 @@ import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.model.User;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.to.VoteTo;
+import topjava.restaurantvoting.utils.VotesUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.time.LocalTime;
@@ -111,7 +112,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         List<VoteTo> actual = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), VoteTo.class);
         assertEquals(1, actual.size());
-        VOTE_TO_MATCHER.assertMatch(actual, VoteTo.createFrom(VOTE_2));
+        VOTE_TO_MATCHER.assertMatch(actual, VotesUtil.createFrom(VOTE_2));
         assertEquals(actual.get(0).getRestaurantId(), RESTAURANT_ID + 1);
         assertEquals(actual.get(0).getUserId(), ADMIN_ID);
     }
@@ -125,7 +126,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
         VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
-        VoteTo newOne = VoteTo.createFrom(getNewVote());
+        VoteTo newOne = VotesUtil.createFrom(getNewVote());
         newOne.setId(created.getId());
         VOTE_TO_MATCHER.assertMatch(created, newOne);
     }

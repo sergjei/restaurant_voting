@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 import topjava.restaurantvoting.model.Meal;
 import topjava.restaurantvoting.repository.MealRepository;
 import topjava.restaurantvoting.to.MealTo;
+import topjava.restaurantvoting.utils.MealsUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.time.LocalDate;
@@ -90,7 +91,7 @@ class MealControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void createOne() throws Exception {
-        MealTo newOne = MealTo.createFrom(getNewMeal());
+        MealTo newOne = MealsUtil.createFrom(getNewMeal());
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL, RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newOne)))
@@ -100,7 +101,7 @@ class MealControllerTest extends AbstractControllerTest {
         int id = created.getId();
         newOne.setId(id);
         MEAL_TO_MATCHER.assertMatch(created, newOne);
-        MEAL_TO_MATCHER.assertMatch(MealTo.createFrom(mealRepository.findById(id).orElseThrow(
+        MEAL_TO_MATCHER.assertMatch(MealsUtil.createFrom(mealRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find meal with  id = " + id)
         )), newOne);
     }
@@ -108,7 +109,7 @@ class MealControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void updateMenu() throws Exception {
-        List<MealTo> newMenu = MealTo.getListTos(getTomorrowMeals());
+        List<MealTo> newMenu = MealsUtil.getListTos(getTomorrowMeals());
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/updateMenu", RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newMenu)))
@@ -118,10 +119,8 @@ class MealControllerTest extends AbstractControllerTest {
         for (int i = 0; i <= 2; i++) {
             newMenu.get(i).setId(created.get(i).getId());
         }
-        System.out.println(JsonUtil.writeValue(newMenu));
-        System.out.println(JsonUtil.writeValue(created));
         MEAL_TO_MATCHER.assertMatch(created, newMenu);
-        MEAL_TO_MATCHER.assertMatch(MealTo.getListTos(mealRepository.getByRestaurantAndDateInclusive(RESTAURANT_ID,
+        MEAL_TO_MATCHER.assertMatch(MealsUtil.getListTos(mealRepository.getByRestaurantAndDateInclusive(RESTAURANT_ID,
                 LocalDate.now().plusDays(1), LocalDate.now().plusDays(1))), newMenu);
     }
 }

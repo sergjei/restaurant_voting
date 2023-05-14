@@ -22,7 +22,6 @@ import java.util.Set;
 @Entity
 @Table(name = "users", indexes = @Index(name = "user_email", columnList = "email", unique = true))
 public class User extends BaseEntity implements Serializable {
-
     @Column(name = "firstname")
     @NotBlank
     @Size(max = 128)

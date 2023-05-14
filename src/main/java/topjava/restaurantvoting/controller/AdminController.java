@@ -16,6 +16,7 @@ import topjava.restaurantvoting.to.RestaurantTo;
 import topjava.restaurantvoting.to.VoteTo;
 import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
+import topjava.restaurantvoting.utils.VotesUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.net.URI;
@@ -89,19 +90,19 @@ public class AdminController {
         List<Integer> restaurantIds = restaurants == null ? Collections.emptyList() :
                 JsonUtil.readValues(restaurants, Integer.class);
         if (userIds.isEmpty() && restaurantIds.isEmpty()) {
-            return VoteTo.getListTos(voteRepository.getByDate(startDate, endDate));
+            return VotesUtil.getListTos(voteRepository.getByDate(startDate, endDate));
         } else if (userIds.isEmpty()) {
-            return VoteTo.getListTos(voteRepository.getByDateAndRestaurant(restaurantIds, startDate, endDate));
+            return VotesUtil.getListTos(voteRepository.getByDateAndRestaurant(restaurantIds, startDate, endDate));
         } else if (restaurantIds.isEmpty()) {
-            return VoteTo.getListTos(voteRepository.getByDateAndUser(userIds, startDate, endDate));
+            return VotesUtil.getListTos(voteRepository.getByDateAndUser(userIds, startDate, endDate));
         } else {
-            return VoteTo.getListTos(voteRepository.getCustom(userIds, restaurantIds, startDate, endDate));
+            return VotesUtil.getListTos(voteRepository.getCustom(userIds, restaurantIds, startDate, endDate));
         }
     }
 
     @GetMapping("/votes/today")
     public List<VoteTo> getTodayVotes() {
-        return VoteTo.getListTos(voteRepository.getToday());
+        return VotesUtil.getListTos(voteRepository.getToday());
     }
 
     @GetMapping("/votes_count")

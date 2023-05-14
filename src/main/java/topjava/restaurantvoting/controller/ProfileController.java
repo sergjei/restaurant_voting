@@ -17,6 +17,7 @@ import topjava.restaurantvoting.repository.VoteRepository;
 import topjava.restaurantvoting.to.VoteTo;
 import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
+import topjava.restaurantvoting.utils.VotesUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -83,7 +84,7 @@ public class ProfileController {
     public List<VoteTo> getVotes(@AuthenticationPrincipal AuthUser authUser,
                                  @RequestParam @Nullable LocalDate startDate,
                                  @RequestParam @Nullable LocalDate endDate) {
-        return VoteTo.getListTos(voteRepository.getByDateAndUser(List.of(authUser.id()),
+        return VotesUtil.getListTos(voteRepository.getByDateAndUser(List.of(authUser.id()),
                 DateUtil.checkedStartDateOrMin(startDate),
                 DateUtil.checkedEndDate(endDate)));
     }
@@ -93,19 +94,14 @@ public class ProfileController {
     public ResponseEntity<VoteTo> vote(@AuthenticationPrincipal AuthUser authUser,
                                        @RequestParam(value = "restId") Integer restId) {
         Vote vote = new Vote(null, LocalDate.now(), authUser.getUser(), null);
-        Vote current = voteRepository.getTodayByUser(authUser.id());
-        if (current == null) {
-            vote.setRestaurant(restaurantRepository.findById(restId).orElseThrow(
-                    () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
-            ));
-            Vote actual = voteRepository.save(vote);
-            URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path(CURRENT_URL + "/votes/{id}")
-                    .buildAndExpand(actual.getId()).toUri();
-            return ResponseEntity.created(uriOfNewResource).body(VoteTo.createFrom(actual));
-        } else {
-            return changeVote(authUser, current.getId(), current.getRestaurant().getId());
-        }
+        vote.setRestaurant(restaurantRepository.findById(restId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
+        ));
+        Vote actual = voteRepository.save(vote);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(CURRENT_URL + "/votes/{id}")
+                .buildAndExpand(actual.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(VotesUtil.createFrom(actual));
     }
 
     @PutMapping(value = "/votes/{id}")
@@ -120,7 +116,7 @@ public class ProfileController {
                 ));
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
             Vote actual = voteRepository.save(vote);
-            return ResponseEntity.ok(VoteTo.createFrom(actual));
+            return ResponseEntity.ok(VotesUtil.createFrom(actual));
         }
         throw new IllegalRequestTimeException("Vote can be changed only before 11 AM");
     }

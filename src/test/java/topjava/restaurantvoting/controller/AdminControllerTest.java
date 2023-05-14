@@ -16,6 +16,8 @@ import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.repository.VoteRepository;
 import topjava.restaurantvoting.to.RestaurantTo;
 import topjava.restaurantvoting.to.VoteTo;
+import topjava.restaurantvoting.utils.RestaurantsUtil;
+import topjava.restaurantvoting.utils.VotesUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.time.LocalDate;
@@ -120,7 +122,7 @@ class AdminControllerTest extends AbstractControllerTest {
                 .params(parameters))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(List.of(VoteTo.createFrom(VOTE_1))));
+                .andExpect(VOTE_TO_MATCHER.contentJson(List.of(VotesUtil.createFrom(VOTE_1))));
     }
 
     @Test
@@ -139,7 +141,7 @@ class AdminControllerTest extends AbstractControllerTest {
         parameters.add("startDate", LocalDate.now().minusDays(1).toString());
         parameters.add("endDate", LocalDate.now().minusDays(1).toString());
         parameters.add("users", List.of(1, 3).toString());
-        List<VoteTo> expected = VoteTo.getListTos(List.of(VOTE_1, VOTE_3));
+        List<VoteTo> expected = VotesUtil.getListTos(List.of(VOTE_1, VOTE_3));
         perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
                 .params(parameters))
                 .andExpect(status().isOk())
@@ -154,7 +156,7 @@ class AdminControllerTest extends AbstractControllerTest {
         parameters.add("startDate", LocalDate.now().minusDays(1).toString());
         parameters.add("endDate", LocalDate.now().minusDays(1).toString());
         parameters.add("restaurants", List.of(2).toString());
-        List<VoteTo> expected = VoteTo.getListTos(List.of(VOTE_2, VOTE_3));
+        List<VoteTo> expected = VotesUtil.getListTos(List.of(VOTE_2, VOTE_3));
         perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
                 .params(parameters))
                 .andExpect(status().isOk())
@@ -165,7 +167,7 @@ class AdminControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_EMAIL)
     void getVotesByDate() throws Exception {
-        List<VoteTo> expected = VoteTo.getListTos(List.of(VOTE_1, VOTE_2, VOTE_3));
+        List<VoteTo> expected = VotesUtil.getListTos(List.of(VOTE_1, VOTE_2, VOTE_3));
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("startDate", LocalDate.now().minusDays(1).toString());
         parameters.add("endDate", LocalDate.now().toString());
@@ -179,7 +181,7 @@ class AdminControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_EMAIL)
     void getVotesDefault() throws Exception {
-        List<VoteTo> expected = VoteTo.getListTos(List.of(VOTE_1, VOTE_2, VOTE_3));
+        List<VoteTo> expected = VotesUtil.getListTos(List.of(VOTE_1, VOTE_2, VOTE_3));
         perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -200,8 +202,8 @@ class AdminControllerTest extends AbstractControllerTest {
         assertEquals(2, restaurantTos.size());
         assertEquals(1, restaurantTos.get(0).getVoteCount());
         assertEquals(2, restaurantTos.get(1).getVoteCount());
-        Restaurant firstRest = Restaurant.createFromTo(restaurantTos.get(0));
-        Restaurant secondRest = Restaurant.createFromTo(restaurantTos.get(1));
+        Restaurant firstRest = RestaurantsUtil.createFromTo(restaurantTos.get(0));
+        Restaurant secondRest = RestaurantsUtil.createFromTo(restaurantTos.get(1));
         RESTAURANT_MATCHER.assertMatch(firstRest, RESTAURANT_1);
         RESTAURANT_MATCHER.assertMatch(secondRest, RESTAURANT_2);
     }

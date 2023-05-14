@@ -3,12 +3,8 @@ package topjava.restaurantvoting.to;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import topjava.restaurantvoting.model.BaseEntity;
-import topjava.restaurantvoting.model.Meal;
-import topjava.restaurantvoting.utils.ValidationUtil;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MealTo extends BaseEntity {
     @NotNull
@@ -64,21 +60,5 @@ public class MealTo extends BaseEntity {
 
     public void setPrice(Integer price) {
         this.price = price;
-    }
-
-    public void updateFrom(Meal origin) {
-        ValidationUtil.assureIdConsistentDef(this, origin.getId());
-        this.setRestaurant(origin.getRestaurant().getId());
-        this.setMenuDate(origin.getMenuDate());
-        this.setDescription(origin.getDescription());
-        this.setPrice(origin.getPrice());
-    }
-
-    public static MealTo createFrom(Meal origin) {
-        return new MealTo(origin.getId(), origin.getRestaurant().getId(), origin.getMenuDate(), origin.getDescription(), origin.getPrice());
-    }
-
-    public static List<MealTo> getListTos(List<Meal> meals) {
-        return meals.stream().map(MealTo::createFrom).collect(Collectors.toList());
     }
 }
