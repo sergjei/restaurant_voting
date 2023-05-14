@@ -1,6 +1,7 @@
 package topjava.restaurantvoting;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.core.Ordered;
@@ -40,6 +41,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleEntityNotFoundException(WebRequest request, EntityNotFoundException ex) {
         return createResponseEntity(request, ErrorAttributeOptions.of(MESSAGE), ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(JdbcSQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<?> handleJdbcSQLIntegrityConstraintViolationException(WebRequest request,
+                                                                                JdbcSQLIntegrityConstraintViolationException ex) {
+        String message = ex.getMessage();
+        String start = "Unique index or primary key violation:";
+        if (message.toLowerCase().contains("restaurant_uniq_meal_date")) {
+            message = start + " restaurant already has meal with same description at this date!";
+        } else if (message.toLowerCase().toLowerCase().contains("rest_email_address")) {
+            message = start + " restaurant with same email and address already exist";
+        } else if (message.toLowerCase().contains("user_email")) {
+            message = start + " user with same email already exist!";
+        } else if (message.toLowerCase().contains("user_vote_per_day")) {
+            message = start + " user has already voted today!";
+        }
+        return createResponseEntity(request, ErrorAttributeOptions.of(MESSAGE), message, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
