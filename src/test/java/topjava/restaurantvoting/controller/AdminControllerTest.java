@@ -127,15 +127,6 @@ class AdminControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(ADMIN_EMAIL)
-    void getTodayVotes() throws Exception {
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes/today"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(List.of()));
-    }
-
-    @Test
-    @WithUserDetails(ADMIN_EMAIL)
     void getVotesByDateAndUser() throws Exception {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("startDate", LocalDate.now().minusDays(1).toString());
@@ -202,6 +193,22 @@ class AdminControllerTest extends AbstractControllerTest {
         assertEquals(2, restaurantTos.size());
         assertEquals(1, restaurantTos.get(0).getVoteCount());
         assertEquals(2, restaurantTos.get(1).getVoteCount());
+        Restaurant firstRest = RestaurantsUtil.createFromTo(restaurantTos.get(0));
+        Restaurant secondRest = RestaurantsUtil.createFromTo(restaurantTos.get(1));
+        RESTAURANT_MATCHER.assertMatch(firstRest, RESTAURANT_1);
+        RESTAURANT_MATCHER.assertMatch(secondRest, RESTAURANT_2);
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_EMAIL)
+    void getTodayVotes() throws Exception {
+        ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes_count/today"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<RestaurantTo> restaurantTos = RESTAURANT_TO_MATCHER.readFromJsonList(action);
+        assertEquals(2, restaurantTos.size());
+        assertEquals(0, restaurantTos.get(0).getVoteCount());
+        assertEquals(0, restaurantTos.get(1).getVoteCount());
         Restaurant firstRest = RestaurantsUtil.createFromTo(restaurantTos.get(0));
         Restaurant secondRest = RestaurantsUtil.createFromTo(restaurantTos.get(1));
         RESTAURANT_MATCHER.assertMatch(firstRest, RESTAURANT_1);

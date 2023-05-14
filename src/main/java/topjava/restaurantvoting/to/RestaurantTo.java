@@ -16,11 +16,11 @@ public class RestaurantTo extends BaseEntity {
     private String email;
     private Integer voteCount;
 
-    public RestaurantTo(Integer id, String name, String email, String address, Long voteCount) {
+    public RestaurantTo(Integer id, String name, String address, String email,  Long voteCount) {
         super(id);
         this.name = name;
-        this.email = email;
         this.address = address;
+        this.email = email;
         this.voteCount = voteCount == null ? null : voteCount.intValue();
     }
 

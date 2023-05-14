@@ -100,9 +100,9 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/votes/today")
-    public List<VoteTo> getTodayVotes() {
-        return VotesUtil.getListTos(voteRepository.getToday());
+    @GetMapping("/votes_count/today")
+    public List<RestaurantTo> getTodayVotes() {
+        return voteRepository.getVoteCountByRestaurant(LocalDate.now(), LocalDate.now());
     }
 
     @GetMapping("/votes_count")

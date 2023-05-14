@@ -41,7 +41,7 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
                          @Param("startDate") LocalDate startDate,
                          @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT new topjava.restaurantvoting.to.RestaurantTo(r.id,r.name,r.email,r.address," +
+    @Query("SELECT new topjava.restaurantvoting.to.RestaurantTo(r.id,r.name,r.address,r.email," +
             "(SELECT COUNT(v) FROM Vote v WHERE v.restaurant.id = r.id AND v.voteDate>=:startDate AND v.voteDate<=:endDate)) " +
             "AS r_vote_count FROM Restaurant r")
     List<RestaurantTo> getVoteCountByRestaurant(@Param("startDate") LocalDate startDate,
