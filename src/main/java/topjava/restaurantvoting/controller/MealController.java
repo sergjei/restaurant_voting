@@ -1,8 +1,6 @@
 package topjava.restaurantvoting.controller;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -18,17 +16,16 @@ import topjava.restaurantvoting.to.MealTo;
 import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.MealsUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
-import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static topjava.restaurantvoting.utils.MealsUtil.updateFromToNoRest;
 
 @RestController
 @RequestMapping(value = MealController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@SecurityRequirement(name = "basicAuth")
 public class MealController {
     public static final String CURRENT_URL = "/rest/admin/restaurants/{rest_id}/meals";
     public MealRepository mealRepository;
@@ -94,24 +91,5 @@ public class MealController {
                 .path(CURRENT_URL + "/{id}")
                 .buildAndExpand(restId, created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(MealsUtil.createFrom(created));
-    }
-
-    @PostMapping(value = "/updateMenu", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<List<MealTo>> updateMenu(@PathVariable("rest_id") Integer restId,
-                                                   @Parameter(description = "List of meals with restaurant replaced by its id",
-                                                           required = true,
-                                                           array = @ArraySchema(schema = @Schema(implementation = MealTo.class)))
-                                                   @RequestBody String json) {
-        List<String> jsonMeals = JsonUtil.jsonToStringList(json);
-        List<MealTo> meals = new ArrayList<>();
-        for (String jsonMeal : jsonMeals) {
-            MealTo mealTo = MealsUtil.createFrom(JsonUtil.readValue(jsonMeal, Meal.class));
-            meals.add(create(restId, mealTo).getBody());
-        }
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(CURRENT_URL)
-                .buildAndExpand(restId).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(meals);
     }
 }

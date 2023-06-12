@@ -1,5 +1,6 @@
 package topjava.restaurantvoting.to;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -14,9 +15,10 @@ public class RestaurantTo extends BaseEntity {
     @NotBlank
     @Size(max = 128)
     private String email;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Integer voteCount;
 
-    public RestaurantTo(Integer id, String name, String address, String email,  Long voteCount) {
+    public RestaurantTo(Integer id, String name, String address, String email, Long voteCount) {
         super(id);
         this.name = name;
         this.address = address;

@@ -1,5 +1,6 @@
 package topjava.restaurantvoting.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -23,10 +24,12 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @RestController
 @RequestMapping(value = ProfileController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@SecurityRequirement(name = "basicAuth")
 public class ProfileController {
 
     public static final String CURRENT_URL = "/rest/profile";
@@ -110,6 +113,9 @@ public class ProfileController {
         Vote current = voteRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find vote with  id = " + id)
         );
+        if (!Objects.equals(current.getVoteDate(), LocalDate.now())) {
+            throw new IllegalRequestTimeException("Can`t change not today vote!");
+        }
         Vote vote = new Vote(current.getId(), LocalDate.now(), authUser.getUser(),
                 restaurantRepository.findById(restId).orElseThrow(
                         () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)

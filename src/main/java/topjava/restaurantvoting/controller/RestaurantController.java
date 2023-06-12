@@ -1,5 +1,6 @@
 package topjava.restaurantvoting.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = RestaurantController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@SecurityRequirement(name = "basicAuth")
 public class RestaurantController {
 
     public static final String CURRENT_URL = "/rest/admin/restaurants";
