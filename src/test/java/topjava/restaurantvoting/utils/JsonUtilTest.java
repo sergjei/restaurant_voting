@@ -3,7 +3,7 @@ package topjava.restaurantvoting.utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import topjava.restaurantvoting.WebSecurityConfig;
+import topjava.restaurantvoting.config.WebSecurityConfig;
 import topjava.restaurantvoting.model.Meal;
 import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.model.User;

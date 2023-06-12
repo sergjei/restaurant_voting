@@ -1,4 +1,4 @@
-package topjava.restaurantvoting;
+package topjava.restaurantvoting.config;
 
 
 import org.h2.tools.Server;

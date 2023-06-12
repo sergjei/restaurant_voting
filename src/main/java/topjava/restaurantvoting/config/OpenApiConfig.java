@@ -1,4 +1,4 @@
-package topjava.restaurantvoting;
+package topjava.restaurantvoting.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

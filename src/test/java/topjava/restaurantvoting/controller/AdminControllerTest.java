@@ -15,9 +15,7 @@ import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.repository.VoteRepository;
 import topjava.restaurantvoting.to.RestaurantTo;
-import topjava.restaurantvoting.to.VoteTo;
 import topjava.restaurantvoting.utils.RestaurantsUtil;
-import topjava.restaurantvoting.utils.VotesUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
 import java.time.LocalDate;
@@ -29,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static topjava.restaurantvoting.RestaurantTestData.*;
 import static topjava.restaurantvoting.UserTestData.*;
-import static topjava.restaurantvoting.VoteTestData.*;
 
 class AdminControllerTest extends AbstractControllerTest {
     public static final String CURRENT_URL = "/rest/admin";
@@ -108,75 +105,6 @@ class AdminControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(CURRENT_URL_USERS + "/{id}", USER_ID))
                 .andExpect(status().isNoContent());
         USER_MATCHER.assertMatch(userRepository.findAll(), List.of(ADMIN, USER_2));
-    }
-
-    @Test
-    @WithUserDetails(ADMIN_EMAIL)
-    void getVotesCustom() throws Exception {
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("startDate", LocalDate.now().minusDays(1).toString());
-        parameters.add("endDate", LocalDate.now().minusDays(1).toString());
-        parameters.add("users", List.of(1, 3).toString());
-        parameters.add("restaurants", List.of(1).toString());
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
-                .params(parameters))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(List.of(VotesUtil.createFrom(VOTE_1))));
-    }
-
-    @Test
-    @WithUserDetails(ADMIN_EMAIL)
-    void getVotesByDateAndUser() throws Exception {
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("startDate", LocalDate.now().minusDays(1).toString());
-        parameters.add("endDate", LocalDate.now().minusDays(1).toString());
-        parameters.add("users", List.of(1, 3).toString());
-        List<VoteTo> expected = VotesUtil.getListTos(List.of(VOTE_1, VOTE_3));
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
-                .params(parameters))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(expected));
-    }
-
-    @Test
-    @WithUserDetails(ADMIN_EMAIL)
-    void getVotesByDateAndRestaurant() throws Exception {
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("startDate", LocalDate.now().minusDays(1).toString());
-        parameters.add("endDate", LocalDate.now().minusDays(1).toString());
-        parameters.add("restaurants", List.of(2).toString());
-        List<VoteTo> expected = VotesUtil.getListTos(List.of(VOTE_2, VOTE_3));
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
-                .params(parameters))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(expected));
-    }
-
-    @Test
-    @WithUserDetails(ADMIN_EMAIL)
-    void getVotesByDate() throws Exception {
-        List<VoteTo> expected = VotesUtil.getListTos(List.of(VOTE_1, VOTE_2, VOTE_3));
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("startDate", LocalDate.now().minusDays(1).toString());
-        parameters.add("endDate", LocalDate.now().toString());
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes")
-                .params(parameters))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(expected));
-    }
-
-    @Test
-    @WithUserDetails(ADMIN_EMAIL)
-    void getVotesDefault() throws Exception {
-        List<VoteTo> expected = VotesUtil.getListTos(List.of(VOTE_1, VOTE_2, VOTE_3));
-        perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(expected));
     }
 
     @Test

@@ -10,7 +10,7 @@
     </parent>
     <groupId>topjava</groupId>
     <artifactId>restaurant-voting</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>restaurant-voting</name>
     <description>Graduate project for TopJava Internship</description>
@@ -55,11 +55,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>h2</groupId>
-            <artifactId>h2</artifactId>
-            <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>

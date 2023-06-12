@@ -1,4 +1,4 @@
-package topjava.restaurantvoting;
+package topjava.restaurantvoting.utils.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;

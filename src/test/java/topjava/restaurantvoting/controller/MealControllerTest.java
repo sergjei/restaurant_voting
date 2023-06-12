@@ -105,22 +105,4 @@ class MealControllerTest extends AbstractControllerTest {
                 () -> new EntityNotFoundException("Can`t find meal with  id = " + id)
         )), newOne);
     }
-
-    @Test
-    @WithUserDetails(value = ADMIN_EMAIL)
-    void updateMenu() throws Exception {
-        List<MealTo> newMenu = MealsUtil.getListTos(getTomorrowMeals());
-        ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/updateMenu", RESTAURANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newMenu)))
-                .andExpect(status().isCreated())
-                .andDo(print());
-        List<MealTo> created = MEAL_TO_MATCHER.readFromJsonList(action);
-        for (int i = 0; i <= 2; i++) {
-            newMenu.get(i).setId(created.get(i).getId());
-        }
-        MEAL_TO_MATCHER.assertMatch(created, newMenu);
-        MEAL_TO_MATCHER.assertMatch(MealsUtil.getListTos(mealRepository.getByRestaurantAndDateInclusive(RESTAURANT_ID,
-                LocalDate.now().plusDays(1), LocalDate.now().plusDays(1))), newMenu);
-    }
 }

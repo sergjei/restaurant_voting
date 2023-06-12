@@ -1,4 +1,4 @@
-package topjava.restaurantvoting;
+package topjava.restaurantvoting.utils.exception;
 
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.http.HttpStatus;

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.IllegalRequestTimeException;
+import topjava.restaurantvoting.utils.exception.IllegalRequestTimeException;
 import topjava.restaurantvoting.model.*;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;

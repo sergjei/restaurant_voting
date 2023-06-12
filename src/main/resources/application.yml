@@ -1,22 +1,22 @@
 #  https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 spring:
+  sql:
+    init:
+      mode: always
   jpa:
     show-sql: true
     open-in-view: false
     defer-datasource-initialization: true
-    sql:
-      init:
-        mode: always
     #  http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html#configurations
     hibernate:
       ddl-auto: create-drop
-      dialect: org.hibernate.dialect.H2Dialect
     properties:
-      format_sql: true
       default_batch_fetch_size: 20
       jdbc.batch_size: 20
       id.new_generator_mappings: false
       hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
         connection:
           charSet: UTF-8
         hbm2ddl:
@@ -40,10 +40,11 @@ spring:
       path: /h2-console
       enabled: true
   jackson:
-    visibility.field: any
-    visibility.getter: none
-    visibility.setter: none
-    visibility.is-getter: none
+    visibility:
+      field: any
+      getter: none
+      setter: none
+      is-getter: none
 #  security:
 #    user:
 #      name: user

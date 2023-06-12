@@ -2,7 +2,7 @@ package topjava.restaurantvoting.utils;
 
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
-import topjava.restaurantvoting.IllegalRequestDataException;
+import topjava.restaurantvoting.utils.exception.IllegalRequestDataException;
 import topjava.restaurantvoting.model.BaseEntity;
 
 public class ValidationUtil {
