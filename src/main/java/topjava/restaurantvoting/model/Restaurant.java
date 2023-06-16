@@ -13,7 +13,7 @@ import topjava.restaurantvoting.utils.json.VoteCustomDeserializer;
 import java.util.List;
 
 @Entity
-@Table(name = "restaurant", indexes = @Index(name = "rest_email_address", columnList = "email,address", unique = true))
+@Table(name = "restaurant", indexes = @Index(name = "rest_name_address", columnList = "name,address", unique = true))
 public class Restaurant extends BaseEntity {
     @Column(name = "name")
     @NotBlank
@@ -22,15 +22,17 @@ public class Restaurant extends BaseEntity {
     @Column(name = "address")
     @NotBlank
     private String address;
+
     @Column(name = "email")
     @Email
     @NotBlank
     @Size(max = 128)
     private String email;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OrderBy("menuDate DESC")
-    private List<Meal> menu;
+    private List<MenuItem> menu;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
@@ -39,7 +41,7 @@ public class Restaurant extends BaseEntity {
     @JsonDeserialize(contentUsing = VoteCustomDeserializer.class)
     private List<Vote> votes;
 
-    public Restaurant(Integer id, String name, String address, String email, List<Meal> menu) {
+    public Restaurant(Integer id, String name, String address, String email, List<MenuItem> menu) {
         super(id);
         this.name = name;
         this.address = address;
@@ -81,11 +83,11 @@ public class Restaurant extends BaseEntity {
         this.email = email;
     }
 
-    public List<Meal> getMenu() {
+    public List<MenuItem> getMenu() {
         return menu;
     }
 
-    public void setMenu(List<Meal> menu) {
+    public void setMenu(List<MenuItem> menu) {
         this.menu = menu;
     }
 

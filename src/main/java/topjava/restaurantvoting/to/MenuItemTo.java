@@ -6,12 +6,13 @@ import topjava.restaurantvoting.model.BaseEntity;
 
 import java.time.LocalDate;
 
-public class MealTo extends BaseEntity {
+public class MenuItemTo extends BaseEntity {
     @NotNull
     private Integer restaurant;
 
     @NotBlank
-    private String description;
+    @NotNull
+    private String name;
 
     @NotNull
     private LocalDate menuDate;
@@ -19,15 +20,15 @@ public class MealTo extends BaseEntity {
     @NotNull
     private Integer price;
 
-    public MealTo(Integer id, Integer restaurant, LocalDate menuDate, String description, Integer price) {
+    public MenuItemTo(Integer id, Integer restaurant, LocalDate menuDate, String name, Integer price) {
         super(id);
         this.restaurant = restaurant;
-        this.description = description;
+        this.name = name;
         this.menuDate = menuDate;
         this.price = price;
     }
 
-    public MealTo() {
+    public MenuItemTo() {
     }
 
     public Integer getRestaurant() {
@@ -38,12 +39,12 @@ public class MealTo extends BaseEntity {
         this.restaurant = restaurant;
     }
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDate getMenuDate() {

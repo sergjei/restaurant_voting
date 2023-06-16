@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.repository.MealRepository;
+import topjava.restaurantvoting.repository.MenuItemRepository;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.to.RestaurantTo;
 import topjava.restaurantvoting.utils.RestaurantsUtil;
@@ -23,11 +23,11 @@ import java.util.List;
 public class RestaurantController {
 
     public static final String CURRENT_URL = "/rest/admin/restaurants";
-    public MealRepository mealRepository;
+    public MenuItemRepository menuItemRepository;
     public RestaurantRepository restaurantRepository;
 
-    public RestaurantController(MealRepository mealRepository, RestaurantRepository restaurantRepository) {
-        this.mealRepository = mealRepository;
+    public RestaurantController(MenuItemRepository menuItemRepository, RestaurantRepository restaurantRepository) {
+        this.menuItemRepository = menuItemRepository;
         this.restaurantRepository = restaurantRepository;
     }
 

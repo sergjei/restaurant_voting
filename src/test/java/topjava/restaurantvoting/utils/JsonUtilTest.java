@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import topjava.restaurantvoting.config.WebSecurityConfig;
-import topjava.restaurantvoting.model.Meal;
+import topjava.restaurantvoting.model.MenuItem;
 import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.model.User;
 import topjava.restaurantvoting.model.Vote;
@@ -16,7 +16,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static topjava.restaurantvoting.MealTestData.*;
+import static topjava.restaurantvoting.MenuItemTestData.*;
 import static topjava.restaurantvoting.RestaurantTestData.RESTAURANT_1;
 import static topjava.restaurantvoting.RestaurantTestData.RESTAURANT_MATCHER;
 import static topjava.restaurantvoting.UserTestData.*;
@@ -28,9 +28,9 @@ import static topjava.restaurantvoting.VoteTestData.VOTE_MATCHER;
 class JsonUtilTest {
     @Test
     void readWriteValueMeal() {
-        String json = JsonUtil.writeValue(MEAL_1_R1_YSTRD);
-        Meal meal = JsonUtil.readValue(json, Meal.class);
-        MEAL_MATCHER.assertMatch(meal, MEAL_1_R1_YSTRD);
+        String json = JsonUtil.writeValue(MENU_ITEM_1_R_1_YSTRD);
+        MenuItem menuItem = JsonUtil.readValue(json, MenuItem.class);
+        MENU_ITEM_MATCHER.assertMatch(menuItem, MENU_ITEM_1_R_1_YSTRD);
     }
 
     @Test
@@ -57,8 +57,8 @@ class JsonUtilTest {
     @Test
     void readWriteValues() {
         String json = JsonUtil.writeValue(R1_MENU_TODAY);
-        List<Meal> menu = JsonUtil.readValues(json, Meal.class);
-        MEAL_MATCHER.assertMatch(menu, R1_MENU_TODAY);
+        List<MenuItem> menu = JsonUtil.readValues(json, MenuItem.class);
+        MENU_ITEM_MATCHER.assertMatch(menu, R1_MENU_TODAY);
     }
 
     @Test

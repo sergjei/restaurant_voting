@@ -26,6 +26,7 @@ public class User extends BaseEntity implements Serializable {
     @NotBlank
     @Size(max = 128)
     private String firstName;
+
     @Column(name = "lastname")
     @NotBlank
     @Size(max = 128)
@@ -36,6 +37,7 @@ public class User extends BaseEntity implements Serializable {
     @Email
     @Size(max = 128)
     private String email;
+
     @Column(name = "password")
     @NotBlank
     @Size(min = 5, max = 128)
@@ -58,7 +60,6 @@ public class User extends BaseEntity implements Serializable {
     @JoinColumn
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
-
 
     public User(Integer id, String firstName, String lastName, String email, String password, Role... roles) {
         super(id);

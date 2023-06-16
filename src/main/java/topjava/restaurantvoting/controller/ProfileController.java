@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.utils.exception.IllegalRequestTimeException;
 import topjava.restaurantvoting.model.*;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
@@ -19,6 +18,7 @@ import topjava.restaurantvoting.to.VoteTo;
 import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.utils.VotesUtil;
+import topjava.restaurantvoting.utils.exception.IllegalRequestTimeException;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -95,10 +95,10 @@ public class ProfileController {
     @PostMapping(value = "/votes")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<VoteTo> vote(@AuthenticationPrincipal AuthUser authUser,
-                                       @RequestParam(value = "restId") Integer restId) {
+                                       @RequestParam(value = "restaurantId") Integer restaurantId) {
         Vote vote = new Vote(null, LocalDate.now(), authUser.getUser(), null);
-        vote.setRestaurant(restaurantRepository.findById(restId).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
+        vote.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restaurantId)
         ));
         Vote actual = voteRepository.save(vote);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -109,7 +109,7 @@ public class ProfileController {
 
     @PutMapping(value = "/votes/{id}")
     public ResponseEntity<VoteTo> changeVote(@AuthenticationPrincipal AuthUser authUser,
-                                             @PathVariable Integer id, @RequestParam(value = "restId") Integer restId) {
+                                             @PathVariable Integer id, @RequestParam(value = "restaurantId") Integer restaurantId) {
         Vote current = voteRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find vote with  id = " + id)
         );
@@ -117,8 +117,8 @@ public class ProfileController {
             throw new IllegalRequestTimeException("Can`t change not today vote!");
         }
         Vote vote = new Vote(current.getId(), LocalDate.now(), authUser.getUser(),
-                restaurantRepository.findById(restId).orElseThrow(
-                        () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
+                restaurantRepository.findById(restaurantId).orElseThrow(
+                        () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restaurantId)
                 ));
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
             Vote actual = voteRepository.save(vote);

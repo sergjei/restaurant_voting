@@ -17,8 +17,8 @@ public class RestaurantTestData {
     }
 
     public static void setTodayMenu() {
-        RESTAURANT_1.setMenu(MealTestData.R1_MENU_TODAY);
-        RESTAURANT_2.setMenu(MealTestData.R2_MENU_TODAY);
+        RESTAURANT_1.setMenu(MenuItemTestData.R1_MENU_TODAY);
+        RESTAURANT_2.setMenu(MenuItemTestData.R2_MENU_TODAY);
     }
 
     public static void setVotesRest() {

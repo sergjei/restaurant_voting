@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static topjava.restaurantvoting.MealTestData.*;
+import static topjava.restaurantvoting.MenuItemTestData.*;
 import static topjava.restaurantvoting.RestaurantTestData.*;
 import static topjava.restaurantvoting.UserTestData.*;
 import static topjava.restaurantvoting.VoteTestData.*;
@@ -98,8 +98,8 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RESTAURANT_MATCHER.contentJson(List.of(RestaurantTestData.RESTAURANT_1, RESTAURANT_2)));
         List<Restaurant> restaurants = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), Restaurant.class);
-        MEAL_MATCHER.assertMatch(restaurants.get(0).getMenu(), R1_MENU_TODAY);
-        MEAL_MATCHER.assertMatch(restaurants.get(1).getMenu(), R2_MENU_TODAY);
+        MENU_ITEM_MATCHER.assertMatch(restaurants.get(0).getMenu(), R1_MENU_TODAY);
+        MENU_ITEM_MATCHER.assertMatch(restaurants.get(1).getMenu(), R2_MENU_TODAY);
     }
 
     @Test
@@ -122,7 +122,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     void vote() throws Exception {
         setVotes();
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/votes")
-                .param("restId", "1"))
+                .param("restaurantId", "1"))
                 .andDo(print())
                 .andExpect(status().isCreated());
         VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
@@ -136,12 +136,12 @@ class ProfileControllerTest extends AbstractControllerTest {
     void changeVote() throws Exception {
         setVotes();
         ResultActions actionCreate = perform(MockMvcRequestBuilders.post(CURRENT_URL + "/votes")
-                .param("restId", "1"))
+                .param("restaurantId", "1"))
                 .andDo(print())
                 .andExpect(status().isCreated());
         VoteTo created = VOTE_TO_MATCHER.readFromJson(actionCreate);
         ResultActions actionUpdate = perform(MockMvcRequestBuilders.put(CURRENT_URL + "/votes/{id}", created.getId())
-                .param("restId", "2"))
+                .param("restaurantId", "2"))
                 .andDo(print());
         VoteTo updated = VOTE_TO_MATCHER.readFromJson(actionUpdate);
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {

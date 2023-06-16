@@ -41,9 +41,9 @@ public class VoteCustomDeserializer extends StdDeserializer<Vote> {
         User user = ur.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find user with  id = " + userId)
         );
-        Integer restId = node.has("restaurant") ? (Integer) node.get("restaurant").numberValue() : null;
-        Restaurant restaurant = restId != null ? rr.findById(restId).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restId)
+        Integer restaurantId = node.has("restaurant") ? (Integer) node.get("restaurant").numberValue() : null;
+        Restaurant restaurant = restaurantId != null ? rr.findById(restaurantId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restaurantId)
         ) : null;
         return new Vote(id, voteDate, user, restaurant);
     }

@@ -9,12 +9,11 @@ VALUES('USER',1),
       ('USER', 2),
       ('USER', 3);
 --
-INSERT INTO restaurant (name, address,email)
+INSERT INTO restaurant (name, address, email)
 VALUES ('Bistro', 'French str','bistro@gmail.com'),
        ('NeedForFood', 'Belfast str','fastfood@gmail.com');
 
-
-INSERT INTO meal (menu_date, description, price, rest_id) 
+INSERT INTO menuItem (menu_date, name, price, restaurant_id)
 VALUES (CURRENT_DATE()-1, 'Hot-dog', 700, 1),
        (CURRENT_DATE()-1, 'pizza', 1200, 1),
        (CURRENT_DATE()-1, 'pasta', 1000, 1),
@@ -28,7 +27,7 @@ VALUES (CURRENT_DATE()-1, 'Hot-dog', 700, 1),
        (CURRENT_DATE(), 'shrimps', 1700, 2),
        (CURRENT_DATE(), 'calmar', 1200, 2);
 
-INSERT INTO vote (vote_date, rest_id, user_id)
+INSERT INTO vote (vote_date, restaurant_id, user_id)
 VALUES (CURRENT_DATE()-1, 1,  1),
        (CURRENT_DATE()-1, 2,  2),
        (CURRENT_DATE()-1, 2,  3);

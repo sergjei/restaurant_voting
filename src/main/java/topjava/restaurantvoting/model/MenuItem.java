@@ -7,27 +7,28 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import topjava.restaurantvoting.utils.json.MealCustomDeserializer;
-import topjava.restaurantvoting.utils.json.MealCustomSerializer;
+import topjava.restaurantvoting.utils.json.MenuItemCustomDeserializer;
+import topjava.restaurantvoting.utils.json.MenuItemCustomSerializer;
 
 import java.time.LocalDate;
 
 @Entity
-@JsonSerialize(using = MealCustomSerializer.class)
-@JsonDeserialize(using = MealCustomDeserializer.class)
-@Table(name = "meal", indexes = {
-        @Index(name = "restaurant_uniq_meal_date", columnList = "menu_date,rest_id,description", unique = true),
-        @Index(name = "restaurant_menu_date", columnList = "menu_date, rest_id")
+@JsonSerialize(using = MenuItemCustomSerializer.class)
+@JsonDeserialize(using = MenuItemCustomDeserializer.class)
+@Table(name = "menuItem", indexes = {
+        @Index(name = "restaurant_uniq_item_date", columnList = "menu_date,restaurant_id,name", unique = true),
+        @Index(name = "restaurant_menu_date", columnList = "menu_date, restaurant_id")
 })
-public class Meal extends BaseEntity {
+public class MenuItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rest_id", nullable = false)
+    @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
-    @Column(name = "description")
+    @Column(name = "name")
     @NotBlank
-    private String description;
+    @NotNull
+    private String name;
 
     @Column(name = "menu_date")
     @NotNull
@@ -37,22 +38,22 @@ public class Meal extends BaseEntity {
     @NotNull
     private int price;
 
-    public Meal(Integer id, Restaurant restaurant, LocalDate menuDate, String description, int price) {
+    public MenuItem(Integer id, Restaurant restaurant, LocalDate menuDate, String name, int price) {
         super(id);
         this.restaurant = restaurant;
-        this.description = description;
+        this.name = name;
         this.menuDate = menuDate;
         this.price = price;
     }
 
-    public Meal(Integer id, LocalDate menuDate, String description, int price) {
+    public MenuItem(Integer id, LocalDate menuDate, String name, int price) {
         super(id);
-        this.description = description;
+        this.name = name;
         this.menuDate = menuDate;
         this.price = price;
     }
 
-    public Meal() {
+    public MenuItem() {
     }
 
     public Restaurant getRestaurant() {
@@ -63,12 +64,12 @@ public class Meal extends BaseEntity {
         this.restaurant = restaurant;
     }
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDate getMenuDate() {

@@ -58,7 +58,7 @@ P.P.S.: Assume that your API will be used by a frontend developer to build front
 | PUT        | /rest/profile                                | Update current authentificated user                                                                                   |
 | DELETE     | /rest/profile                                | Delete current authentificated user                                                                                   |
 | POST       | /rest/profile/register                       | Register new user with role USER. Can`t be accessed by authentificated user                                           |
-| GET        | /rest/profile/menu                           | Get list of restaurants with today menu (list of meals)                                                               |
+| GET        | /rest/profile/menu                           | Get list of restaurants with today menu (list of menuItems)                                                               |
 | GET        | /rest/profile/votes                          | User get list of his votes for specified interval of time(inclusive)                                                  |
 | POST       | /rest/profile/votes                          | User vote for the restaurant, where wants to have lunch. He can vote only once a day                                  |
 | PUT        | /rest/profile/votes/{id}                     | User can change his vote until it is before 11:00                                                                     |
@@ -70,11 +70,11 @@ P.P.S.: Assume that your API will be used by a frontend developer to build front
 | GET        | /rest/admin/users/by_email                   | Get user by email                                                                                                     |
 | GET        | /rest/admin/votes_count                      | Admin can get vote results (restaurant with amount of voices) for specified period of time. By default - for all time |
 | GET        | /rest/admin/votes_count/today                | Admin can get vote results (restaurant with amount of voices) for today                                               |
-| GET        | /rest/admin/restaurants/{rest_id}/meals/{id} | Get meal by id                                                                                                        |
-| PUT        | /rest/admin/restaurants/{rest_id}/meals/{id} | Update meal by id                                                                                                     |
-| DELETE     | /rest/admin/restaurants/{rest_id}/meals/{id} | Delete meal by id                                                                                                     |
-| GET        | /rest/admin/restaurants/{rest_id}/meals      | Get list of meals for specified period                                                                                |
-| POST       | /rest/admin/restaurants/{rest_id}/meals      | Add single meal to restaurant                                                                                         |                                                                |
+| GET        | /rest/admin/restaurants/{restaurant_id}/menuItems/{id} | Get menuItem by id                                                                                                        |
+| PUT        | /rest/admin/restaurants/{restaurant_id}/menuItems/{id} | Update menuItem by id                                                                                                     |
+| DELETE     | /rest/admin/restaurants/{restaurant_id}/menuItems/{id} | Delete menuItem by id                                                                                                     |
+| GET        | /rest/admin/restaurants/{restaurant_id}/menuItems      | Get list of menuItems for specified period                                                                                |
+| POST       | /rest/admin/restaurants/{restaurant_id}/menuItems      | Add single menuItem to restaurant                                                                                         |                                                                |
 | GET        | /rest/admin/restaurants/{id}                 | Get restaurant by id                                                                                                  |
 | PUT        | /rest/admin/restaurants/{id}                 | Update restaurant by id                                                                                               |
 | DELETE     | /rest/admin/restaurants/{id}                 | Delete restaurant by id                                                                                               |
