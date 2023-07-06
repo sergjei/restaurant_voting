@@ -6,11 +6,25 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import topjava.restaurantvoting.model.BaseEntity;
 
+import java.util.List;
+
 public class RestaurantTo extends BaseEntity {
     @NotBlank
     private String name;
     @NotBlank
     private String address;
+
+    public List<MenuItemTo> getMenu() {
+        return menu;
+    }
+
+    public void setMenu(List<MenuItemTo> menu) {
+        this.menu = menu;
+    }
+
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private List<MenuItemTo> menu;
+
     @Email
     @NotBlank
     @Size(max = 128)
@@ -18,11 +32,21 @@ public class RestaurantTo extends BaseEntity {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Integer voteCount;
 
+    public RestaurantTo(Integer id, String name, String address, String email, List<MenuItemTo> menu, Long voteCount) {
+        super(id);
+        this.name = name;
+        this.address = address;
+        this.email = email;
+        this.menu = menu;
+        this.voteCount = voteCount == null ? null : voteCount.intValue();
+    }
+
     public RestaurantTo(Integer id, String name, String address, String email, Long voteCount) {
         super(id);
         this.name = name;
         this.address = address;
         this.email = email;
+        this.menu = null;
         this.voteCount = voteCount == null ? null : voteCount.intValue();
     }
 

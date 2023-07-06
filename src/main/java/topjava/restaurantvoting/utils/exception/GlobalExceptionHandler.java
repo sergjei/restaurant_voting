@@ -48,15 +48,18 @@ public class GlobalExceptionHandler {
                                                                                 JdbcSQLIntegrityConstraintViolationException ex) {
         String message = ex.getMessage();
         String start = "Unique index or primary key violation:";
-        if (message.toLowerCase().contains("restaurant_uniq_meal_date")) {
-            message = start + " restaurant already has meal with same description at this date!";
-        } else if (message.toLowerCase().toLowerCase().contains("rest_email_address")) {
-            message = start + " restaurant with same email and address already exist";
+        if (message.toLowerCase().contains("restaurant_uniq_menuitem_date")) {
+            message = start + " restaurant already has menuitem with same description at this date!";
+        } else if (message.toLowerCase().toLowerCase().contains("restaurant_name_address")) {
+            message = start + " restaurant with same email and name already exist";
         } else if (message.toLowerCase().contains("user_email")) {
             message = start + " user with same email already exist!";
         } else if (message.toLowerCase().contains("user_vote_per_day")) {
             message = start + " user has already voted today!";
+        }else if (message.toLowerCase().contains("restaurant_menu_item")) {
+            message = start + " menu item with this id already belongs to another restaurant!";
         }
+
         return createResponseEntity(request, ErrorAttributeOptions.of(MESSAGE), message, HttpStatus.CONFLICT);
     }
 

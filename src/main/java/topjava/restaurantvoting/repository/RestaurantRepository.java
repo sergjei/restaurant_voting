@@ -23,7 +23,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
     List<Restaurant> getTodayMenu();
 
     @Override
-    @Cacheable(cacheNames="restaurants")
+    @Cacheable(cacheNames = "restaurants")
     @Query("SELECT r FROM Restaurant r JOIN FETCH r.menu WHERE r.id =:id ")
     Optional<Restaurant> findById(@Param("id") Integer id);
 

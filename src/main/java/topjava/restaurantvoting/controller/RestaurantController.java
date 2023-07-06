@@ -38,7 +38,7 @@ public class RestaurantController {
 
     @GetMapping("/{id}")
     public RestaurantTo get(@PathVariable Integer id) {
-        return RestaurantsUtil.createFrom(restaurantRepository.findById(id).orElseThrow(
+        return RestaurantsUtil.createToFrom(restaurantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find restaurant with  id = " + id)
         ));
     }
@@ -60,7 +60,7 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurant) {
         ValidationUtil.checkNew(restaurant);
-        RestaurantTo created = RestaurantsUtil.createFrom(restaurantRepository.save(RestaurantsUtil.createFromTo(restaurant)));
+        RestaurantTo created = RestaurantsUtil.createToFrom(restaurantRepository.save(RestaurantsUtil.createFromTo(restaurant)));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(CURRENT_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();

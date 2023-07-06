@@ -19,15 +19,15 @@ public class MenuItemUtil {
         );
     }
 
-    public static MenuItemTo createFrom(MenuItem origin) {
+    public static MenuItemTo createToFrom(MenuItem origin) {
         return new MenuItemTo(origin.getId() == null ? null : origin.getId(),
-                origin.getRestaurant().getId(),
+                origin.getRestaurant() == null ? null : origin.getRestaurant().getId(),
                 origin.getMenuDate(),
                 origin.getName(),
                 origin.getPrice());
     }
 
     public static List<MenuItemTo> getListTos(List<MenuItem> menuItems) {
-        return menuItems.stream().map(MenuItemUtil::createFrom).collect(Collectors.toList());
+        return menuItems.stream().map(MenuItemUtil::createToFrom).collect(Collectors.toList());
     }
 }

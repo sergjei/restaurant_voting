@@ -27,7 +27,7 @@ import static topjava.restaurantvoting.VoteTestData.VOTE_MATCHER;
 @ActiveProfiles("test")
 class JsonUtilTest {
     @Test
-    void readWriteValueMeal() {
+    void readWriteValueMenuItem() {
         String json = JsonUtil.writeValue(MENU_ITEM_1_R_1_YSTRD);
         MenuItem menuItem = JsonUtil.readValue(json, MenuItem.class);
         MENU_ITEM_MATCHER.assertMatch(menuItem, MENU_ITEM_1_R_1_YSTRD);

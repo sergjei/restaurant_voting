@@ -11,7 +11,10 @@ import topjava.restaurantvoting.RestaurantTestData;
 import topjava.restaurantvoting.model.Restaurant;
 import topjava.restaurantvoting.model.User;
 import topjava.restaurantvoting.repository.UserRepository;
+import topjava.restaurantvoting.to.RestaurantTo;
 import topjava.restaurantvoting.to.VoteTo;
+import topjava.restaurantvoting.utils.MenuItemUtil;
+import topjava.restaurantvoting.utils.RestaurantsUtil;
 import topjava.restaurantvoting.utils.VotesUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
@@ -96,10 +99,10 @@ class ProfileControllerTest extends AbstractControllerTest {
         ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/menu"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(List.of(RestaurantTestData.RESTAURANT_1, RESTAURANT_2)));
-        List<Restaurant> restaurants = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), Restaurant.class);
-        MENU_ITEM_MATCHER.assertMatch(restaurants.get(0).getMenu(), R1_MENU_TODAY);
-        MENU_ITEM_MATCHER.assertMatch(restaurants.get(1).getMenu(), R2_MENU_TODAY);
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(RestaurantsUtil.getListTos(List.of(RestaurantTestData.RESTAURANT_1, RESTAURANT_2))));
+        List<RestaurantTo> restaurants = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), RestaurantTo.class);
+        MENU_ITEM_TO_MATCHER.assertMatch(restaurants.get(0).getMenu(), MenuItemUtil.getListTos(R1_MENU_TODAY));
+        MENU_ITEM_TO_MATCHER.assertMatch(restaurants.get(1).getMenu(), MenuItemUtil.getListTos(R2_MENU_TODAY));
     }
 
     @Test
@@ -112,7 +115,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         List<VoteTo> actual = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), VoteTo.class);
         assertEquals(1, actual.size());
-        VOTE_TO_MATCHER.assertMatch(actual, VotesUtil.createFrom(VOTE_2));
+        VOTE_TO_MATCHER.assertMatch(actual, VotesUtil.createToFrom(VOTE_2));
         assertEquals(actual.get(0).getRestaurantId(), RESTAURANT_ID + 1);
         assertEquals(actual.get(0).getUserId(), ADMIN_ID);
     }
@@ -126,7 +129,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
         VoteTo created = VOTE_TO_MATCHER.readFromJson(action);
-        VoteTo newOne = VotesUtil.createFrom(getNewVote());
+        VoteTo newOne = VotesUtil.createToFrom(getNewVote());
         newOne.setId(created.getId());
         VOTE_TO_MATCHER.assertMatch(created, newOne);
     }

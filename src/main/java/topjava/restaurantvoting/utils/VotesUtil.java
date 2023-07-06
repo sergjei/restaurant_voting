@@ -10,7 +10,7 @@ public class VotesUtil {
     private VotesUtil() {
     }
 
-    public static VoteTo createFrom(Vote origin) {
+    public static VoteTo createToFrom(Vote origin) {
         return new VoteTo(
                 origin.getId(),
                 origin.getVoteDate(),
@@ -19,6 +19,6 @@ public class VotesUtil {
     }
 
     public static List<VoteTo> getListTos(List<Vote> votes) {
-        return votes.stream().map(VotesUtil::createFrom).collect(Collectors.toList());
+        return votes.stream().map(VotesUtil::createToFrom).collect(Collectors.toList());
     }
 }

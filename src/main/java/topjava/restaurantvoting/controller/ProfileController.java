@@ -14,8 +14,10 @@ import topjava.restaurantvoting.model.*;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.repository.VoteRepository;
+import topjava.restaurantvoting.to.RestaurantTo;
 import topjava.restaurantvoting.to.VoteTo;
 import topjava.restaurantvoting.utils.DateUtil;
+import topjava.restaurantvoting.utils.RestaurantsUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.utils.VotesUtil;
 import topjava.restaurantvoting.utils.exception.IllegalRequestTimeException;
@@ -79,8 +81,9 @@ public class ProfileController {
     }
 
     @GetMapping("/menu")
-    public List<Restaurant> getMenu() {
-        return restaurantRepository.getTodayMenu();
+    public List<RestaurantTo> getMenu() {
+        List<Restaurant> origin = restaurantRepository.getTodayMenu();
+        return RestaurantsUtil.getListTos(origin);
     }
 
     @GetMapping("/votes")
@@ -104,7 +107,7 @@ public class ProfileController {
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(CURRENT_URL + "/votes/{id}")
                 .buildAndExpand(actual.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(VotesUtil.createFrom(actual));
+        return ResponseEntity.created(uriOfNewResource).body(VotesUtil.createToFrom(actual));
     }
 
     @PutMapping(value = "/votes/{id}")
@@ -122,7 +125,7 @@ public class ProfileController {
                 ));
         if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
             Vote actual = voteRepository.save(vote);
-            return ResponseEntity.ok(VotesUtil.createFrom(actual));
+            return ResponseEntity.ok(VotesUtil.createToFrom(actual));
         }
         throw new IllegalRequestTimeException("Vote can be changed only before 11 AM");
     }

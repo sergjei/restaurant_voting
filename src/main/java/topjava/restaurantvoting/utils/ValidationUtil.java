@@ -2,8 +2,8 @@ package topjava.restaurantvoting.utils;
 
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
-import topjava.restaurantvoting.utils.exception.IllegalRequestDataException;
 import topjava.restaurantvoting.model.BaseEntity;
+import topjava.restaurantvoting.utils.exception.IllegalRequestDataException;
 
 public class ValidationUtil {
     public static void checkNew(BaseEntity entity) {
@@ -26,7 +26,7 @@ public class ValidationUtil {
             entity.setId(id);
         }
         if (entity.getId() != id) {
-            throw new IllegalRequestDataException("Meal belongs to another restaurant! " +
+            throw new IllegalRequestDataException("Menu item belongs to another restaurant! " +
                     entity.getClass().getSimpleName() + "(path) must have id: (" + entity.getId() + ")");
         }
     }

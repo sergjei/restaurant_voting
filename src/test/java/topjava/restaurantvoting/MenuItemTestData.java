@@ -10,7 +10,7 @@ import static topjava.restaurantvoting.RestaurantTestData.RESTAURANT_1;
 
 public class MenuItemTestData {
     public static final MatcherFactory.Matcher<MenuItem> MENU_ITEM_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(MenuItem.class, "restaurant");
-    public static final MatcherFactory.Matcher<MenuItemTo> MENU_ITEM_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(MenuItemTo.class);
+    public static final MatcherFactory.Matcher<MenuItemTo> MENU_ITEM_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(MenuItemTo.class, "restaurant");
     public static final int MENU_ITEM_ID = 1;
     public static final MenuItem MENU_ITEM_1_R_1_YSTRD = new MenuItem(MENU_ITEM_ID, LocalDate.now().minusDays(1), "Hot-dog", 700);
     public static final MenuItem MENU_ITEM_2_R_1_YSTRD = new MenuItem(MENU_ITEM_ID + 1, LocalDate.now().minusDays(1), "pizza", 1200);
@@ -35,17 +35,17 @@ public class MenuItemTestData {
     public static final List<MenuItem> R1_MENU_ALL = List.of(MENU_ITEM_1_R_1_YSTRD, MENU_ITEM_2_R_1_YSTRD, MENU_ITEM_3_R_1_YSTRD, MENU_ITEM_4_R_1_TODAY, MENU_ITEM_5_R_1_TODAY, MENU_ITEM_6_R_1_TODAY);
     public static final List<MenuItem> MENU_TMRW = List.of(MENU_ITEM_7_TMRW, MENU_ITEM_8_TMRW, MENU_ITEM_9_TMRW);
 
-    public static MenuItem getNewMeal() {
+    public static MenuItem getNewMenuItem() {
         return new MenuItem(null, RESTAURANT_1, LocalDate.now(), "newFood", 666);
     }
 
-    public static List<MenuItem> getTomorrowMeals() {
+    public static List<MenuItem> getTomorrowMenuItems() {
         return List.of(new MenuItem(null, RESTAURANT_1, LocalDate.now().plusDays(1), "porridge with pork", 1700),
                 new MenuItem(null, RESTAURANT_1, LocalDate.now().plusDays(1), "pasta with cheese", 900),
                 new MenuItem(null, RESTAURANT_1, LocalDate.now().plusDays(1), "fried vegatables", 1200));
     }
 
-    public static MenuItem getUpdatedMeal(MenuItem old) {
+    public static MenuItem getUpdatedMenuItem(MenuItem old) {
         MenuItem updated = new MenuItem();
         updated.setId(old.getId());
         updated.setName("updatedName");

@@ -20,6 +20,7 @@ import topjava.restaurantvoting.utils.ValidationUtil;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static topjava.restaurantvoting.utils.MenuItemUtil.updateFromToNoRest;
 
@@ -27,14 +28,13 @@ import static topjava.restaurantvoting.utils.MenuItemUtil.updateFromToNoRest;
 @RequestMapping(value = MenuItemController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name = "basicAuth")
 public class MenuItemController {
-    public static final String CURRENT_URL = "/rest/admin/restaurants/{restaurant_id}/meals";
+    public static final String CURRENT_URL = "/rest/admin/restaurants/{restaurant_id}/menu_items";
     public MenuItemRepository menuItemRepository;
     public RestaurantRepository restaurantRepository;
 
     public MenuItemController(MenuItemRepository menuItemRepository, RestaurantRepository restaurantRepository) {
         this.menuItemRepository = menuItemRepository;
         this.restaurantRepository = restaurantRepository;
-
     }
 
     @GetMapping
@@ -47,31 +47,34 @@ public class MenuItemController {
     }
 
     @GetMapping("/{id}")
-    public MenuItemTo get(@PathVariable("id") Integer mealId, @PathVariable("restaurant_id") Integer restaurantId) {
-        MenuItem menuItem = menuItemRepository.findById(mealId).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find meal with  id = " + mealId));
+    public MenuItemTo get(@PathVariable("id") Integer menuItemId, @PathVariable("restaurant_id") Integer restaurantId) {
+        MenuItem menuItem = menuItemRepository.findById(menuItemId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find menuItem with  id = " + menuItemId));
         ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant(), restaurantId);
-        return MenuItemUtil.createFrom(menuItem);
+        return MenuItemUtil.createToFrom(menuItem);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") Integer mealId, @PathVariable("restaurant_id") Integer restaurantId) {
-        MenuItem menuItem = menuItemRepository.findById(mealId).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find meal with  id = " + mealId));
+    public void delete(@PathVariable("id") Integer menuItemId, @PathVariable("restaurant_id") Integer restaurantId) {
+        MenuItem menuItem = menuItemRepository.findById(menuItemId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find menu item with  id = " + menuItemId));
         ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant(), restaurantId);
-        menuItemRepository.deleteById(mealId);
+        menuItemRepository.deleteById(menuItemId);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable("id") Integer mealId, @PathVariable("restaurant_id") Integer restaurantId,
+    public void update(@PathVariable("id") Integer menuItemId, @PathVariable("restaurant_id") Integer restaurantId,
                        @Valid @RequestBody MenuItemTo updatedTo) {
         MenuItem updated = updateFromToNoRest(updatedTo);
-        ValidationUtil.assureIdConsistentDef(updated, mealId);
+        ValidationUtil.assureIdConsistentDef(updated, menuItemId);
         updated.setRestaurant(restaurantRepository.findById(updatedTo.getRestaurant()).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find restaurant with  id = " + updatedTo.getRestaurant())
         ));
+        if (!Objects.equals(updated.getRestaurant().getId(), restaurantId)) {
+            throw new EntityNotFoundException("Menu item with id = " + menuItemId + " belongs to restaurant with id = " + updated.getRestaurant().getId());
+        }
         ValidationUtil.assureIdConsistentRest(updated.getRestaurant(), restaurantId);
         menuItemRepository.save(updated);
     }
@@ -90,6 +93,6 @@ public class MenuItemController {
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(CURRENT_URL + "/{id}")
                 .buildAndExpand(restaurantId, created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(MenuItemUtil.createFrom(created));
+        return ResponseEntity.created(uriOfNewResource).body(MenuItemUtil.createToFrom(created));
     }
 }

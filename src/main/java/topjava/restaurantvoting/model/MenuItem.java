@@ -1,23 +1,18 @@
 package topjava.restaurantvoting.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import topjava.restaurantvoting.utils.json.MenuItemCustomDeserializer;
-import topjava.restaurantvoting.utils.json.MenuItemCustomSerializer;
 
 import java.time.LocalDate;
 
 @Entity
-@JsonSerialize(using = MenuItemCustomSerializer.class)
-@JsonDeserialize(using = MenuItemCustomDeserializer.class)
-@Table(name = "menuItem", indexes = {
-        @Index(name = "restaurant_uniq_item_date", columnList = "menu_date,restaurant_id,name", unique = true),
-        @Index(name = "restaurant_menu_date", columnList = "menu_date, restaurant_id")
+@Table(name = "menu_item", indexes = {
+        @Index(name = "restaurant_uniq_menuitem_date", columnList = "menu_date,restaurant_id,name", unique = true),
+        @Index(name = "restaurant_menu_date", columnList = "menu_date, restaurant_id"),
+        @Index(name = "restaurant_menu_item", columnList = "id, restaurant_id"),
 })
 public class MenuItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)

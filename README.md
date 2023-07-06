@@ -41,7 +41,7 @@ P.P.S.: Assume that your API will be used by a frontend developer to build front
 * Non-authentificated users can register themselfes in app
 * All other operations available only for authentificated users witn necessary authorization
 * Authorization is define by URL(regular user - "/rest/profile", admin - "/rest/admin")
-* Meal is subresource of restaurant
+* MenuItem is subresource of restaurant
 * All main errors of app are sent in response body with fields:
   {
   "timestamp": ...,

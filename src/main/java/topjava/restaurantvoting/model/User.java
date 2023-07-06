@@ -11,7 +11,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
 import topjava.restaurantvoting.utils.json.PasswordDeserializer;
-import topjava.restaurantvoting.utils.json.VoteCustomDeserializer;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -49,7 +48,6 @@ public class User extends BaseEntity implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OrderBy("voteDate DESC")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonDeserialize(contentUsing = VoteCustomDeserializer.class)
     private List<Vote> votes;
 
     @ElementCollection(fetch = FetchType.EAGER)

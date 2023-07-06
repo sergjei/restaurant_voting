@@ -18,16 +18,17 @@ public class RestaurantsUtil {
                 to.getEmail());
     }
 
-    public static RestaurantTo createFrom(Restaurant origin) {
+    public static RestaurantTo createToFrom(Restaurant origin) {
         return new RestaurantTo(
                 origin.getId() == null ? null : origin.getId(),
                 origin.getName(),
                 origin.getAddress(),
                 origin.getEmail(),
+                origin.getMenu() == null ? null : MenuItemUtil.getListTos(origin.getMenu()),
                 null);
     }
 
     public static List<RestaurantTo> getListTos(List<Restaurant> restaurants) {
-        return restaurants.stream().map(RestaurantsUtil::createFrom).collect(Collectors.toList());
+        return restaurants.stream().map(RestaurantsUtil::createToFrom).collect(Collectors.toList());
     }
 }

@@ -1,14 +1,12 @@
 package topjava.restaurantvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import topjava.restaurantvoting.utils.json.VoteCustomDeserializer;
 
 import java.util.List;
 
@@ -38,7 +36,6 @@ public class Restaurant extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OrderBy("voteDate DESC")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonDeserialize(contentUsing = VoteCustomDeserializer.class)
     private List<Vote> votes;
 
     public Restaurant(Integer id, String name, String address, String email, List<MenuItem> menu) {

@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import topjava.restaurantvoting.model.MenuItem;
 import topjava.restaurantvoting.repository.MenuItemRepository;
 import topjava.restaurantvoting.to.MenuItemTo;
 import topjava.restaurantvoting.utils.MenuItemUtil;
@@ -26,7 +25,7 @@ import static topjava.restaurantvoting.RestaurantTestData.RESTAURANT_ID;
 import static topjava.restaurantvoting.UserTestData.ADMIN_EMAIL;
 
 class MenuItemControllerTest extends AbstractControllerTest {
-    public static final String CURRENT_URL = "/rest/admin/restaurants/{restaurant_id}/meals";
+    public static final String CURRENT_URL = "/rest/admin/restaurants/{restaurant_id}/menu_items";
     @Autowired
     private MenuItemRepository menuItemRepository;
 
@@ -36,7 +35,7 @@ class MenuItemControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(CURRENT_URL, RESTAURANT_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MENU_ITEM_MATCHER.contentJson(R1_MENU_ALL));
+                .andExpect(MENU_ITEM_TO_MATCHER.contentJson(MenuItemUtil.getListTos(R1_MENU_ALL)));
     }
 
     @Test
@@ -49,7 +48,7 @@ class MenuItemControllerTest extends AbstractControllerTest {
                 .params(parameters))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MENU_ITEM_MATCHER.contentJson(R1_MENU_TODAY));
+                .andExpect(MENU_ITEM_TO_MATCHER.contentJson(MenuItemUtil.getListTos(R1_MENU_TODAY)));
     }
 
     @Test
@@ -58,7 +57,7 @@ class MenuItemControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(CURRENT_URL + "/{id}", RESTAURANT_ID, MENU_ITEM_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MENU_ITEM_MATCHER.contentJson(MENU_ITEM_1_R_1_YSTRD));
+                .andExpect(MENU_ITEM_TO_MATCHER.contentJson(MenuItemUtil.createToFrom(MENU_ITEM_1_R_1_YSTRD)));
     }
 
     @Test
@@ -75,23 +74,23 @@ class MenuItemControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void update() throws Exception {
-        MenuItem updated = getUpdatedMeal(menuItemRepository.findById(MENU_ITEM_ID).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find meal with  id = " + MENU_ITEM_ID)
-        ));
+        MenuItemTo updated = MenuItemUtil.createToFrom(getUpdatedMenuItem(menuItemRepository.findById(MENU_ITEM_ID).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find menu item with  id = " + MENU_ITEM_ID)
+        )));
         perform(MockMvcRequestBuilders.put(CURRENT_URL + "/{id}", RESTAURANT_ID, MENU_ITEM_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        MENU_ITEM_MATCHER.assertMatch(menuItemRepository.findById(MENU_ITEM_ID).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find meal with  id = " + MENU_ITEM_ID)
-        ), updated);
+        MENU_ITEM_TO_MATCHER.assertMatch(MenuItemUtil.createToFrom(menuItemRepository.findById(MENU_ITEM_ID).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find menu item with  id = " + MENU_ITEM_ID)
+        )), updated);
     }
 
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
     void createOne() throws Exception {
-        MenuItemTo newOne = MenuItemUtil.createFrom(getNewMeal());
+        MenuItemTo newOne = MenuItemUtil.createToFrom(getNewMenuItem());
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL, RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newOne)))
@@ -101,8 +100,8 @@ class MenuItemControllerTest extends AbstractControllerTest {
         int id = created.getId();
         newOne.setId(id);
         MENU_ITEM_TO_MATCHER.assertMatch(created, newOne);
-        MENU_ITEM_TO_MATCHER.assertMatch(MenuItemUtil.createFrom(menuItemRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find meal with  id = " + id)
+        MENU_ITEM_TO_MATCHER.assertMatch(MenuItemUtil.createToFrom(menuItemRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find menu item with  id = " + id)
         )), newOne);
     }
 }
