@@ -76,20 +76,19 @@ class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional
     @WithUserDetails(value = ADMIN_EMAIL)
     void create() throws Exception {
         RestaurantTo newOne = RestaurantsUtil.createToFrom(getNewRestaurant());
         ResultActions action = perform(MockMvcRequestBuilders.post(CURRENT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newOne)))
-                .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andDo(print());
         RestaurantTo created = RESTAURANT_TO_MATCHER.readFromJson(action);
         newOne.setId(created.getId());
         RESTAURANT_TO_MATCHER.assertMatch(created, newOne);
-//        RESTAURANT_TO_MATCHER.assertMatch(RestaurantsUtil.createToFrom(restaurantRepository.findById(created.getId()).orElseThrow(
-//                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + created.getId())
-//        )), newOne);
+        RESTAURANT_TO_MATCHER.assertMatch(RestaurantsUtil.createToFrom(restaurantRepository.findById(created.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find restaurant with  id = " + created.getId())
+        )), newOne);
     }
 }

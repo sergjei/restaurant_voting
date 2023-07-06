@@ -24,11 +24,24 @@ public class RestaurantsUtil {
                 origin.getName(),
                 origin.getAddress(),
                 origin.getEmail(),
+                null);
+    }
+
+    public static RestaurantTo createToFromWithMenu(Restaurant origin) {
+        return new RestaurantTo(
+                origin.getId() == null ? null : origin.getId(),
+                origin.getName(),
+                origin.getAddress(),
+                origin.getEmail(),
                 origin.getMenu() == null ? null : MenuItemUtil.getListTos(origin.getMenu()),
                 null);
     }
 
     public static List<RestaurantTo> getListTos(List<Restaurant> restaurants) {
         return restaurants.stream().map(RestaurantsUtil::createToFrom).collect(Collectors.toList());
+    }
+
+    public static List<RestaurantTo> getListTosWithMenu(List<Restaurant> restaurants) {
+        return restaurants.stream().map(RestaurantsUtil::createToFromWithMenu).collect(Collectors.toList());
     }
 }

@@ -83,7 +83,7 @@ public class ProfileController {
     @GetMapping("/menu")
     public List<RestaurantTo> getMenu() {
         List<Restaurant> origin = restaurantRepository.getTodayMenu();
-        return RestaurantsUtil.getListTos(origin);
+        return RestaurantsUtil.getListTosWithMenu(origin);
     }
 
     @GetMapping("/votes")
