@@ -6,6 +6,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
+import topjava.restaurantvoting.utils.DateUtil;
 
 import java.time.LocalDate;
 
@@ -41,7 +42,7 @@ public class Vote extends BaseEntity {
 
     public Vote(Integer id, User user, Restaurant restaurant) {
         super(id);
-        this.voteDate = LocalDate.now();
+        this.voteDate = DateUtil.getToday();
         this.user = user;
         this.restaurant = restaurant;
     }

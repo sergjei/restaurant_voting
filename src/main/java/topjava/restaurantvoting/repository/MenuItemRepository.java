@@ -12,7 +12,6 @@ import topjava.restaurantvoting.model.MenuItem;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
@@ -21,14 +20,6 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
     List<MenuItem> getByRestaurantAndDateInclusive(@Param("restaurantId") Integer restaurantId,
                                                    @Param("startDate") LocalDate startDate,
                                                    @Param("endDate") LocalDate endDate);
-
-    @Override
-    @Query("SELECT m FROM MenuItem m JOIN FETCH m.restaurant WHERE m.id =:id ")
-    Optional<MenuItem> findById(@Param("id") Integer id);
-
-    @Override
-    @Query("SELECT m FROM MenuItem m JOIN FETCH m.restaurant")
-    List<MenuItem> findAll();
 
     @Override
     @Modifying

@@ -15,10 +15,10 @@ import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.repository.VoteRepository;
 import topjava.restaurantvoting.to.RestaurantTo;
+import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.RestaurantsUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -111,8 +111,8 @@ class AdminControllerTest extends AbstractControllerTest {
     @WithUserDetails(ADMIN_EMAIL)
     void getVoteCount() throws Exception {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("startDate", LocalDate.now().minusDays(1).toString());
-        parameters.add("endDate", LocalDate.now().minusDays(1).toString());
+        parameters.add("startDate", DateUtil.getToday().minusDays(1).toString());
+        parameters.add("endDate", DateUtil.getToday().minusDays(1).toString());
         ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/votes_count")
                 .params(parameters))
                 .andExpect(status().isOk())

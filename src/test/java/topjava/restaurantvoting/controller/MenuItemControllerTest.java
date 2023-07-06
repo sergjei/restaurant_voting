@@ -11,10 +11,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import topjava.restaurantvoting.repository.MenuItemRepository;
 import topjava.restaurantvoting.to.MenuItemTo;
+import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.MenuItemUtil;
 import topjava.restaurantvoting.utils.json.JsonUtil;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,8 +42,8 @@ class MenuItemControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_EMAIL)
     void getToday() throws Exception {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("startDate", LocalDate.now().toString());
-        parameters.add("endDate", LocalDate.now().toString());
+        parameters.add("startDate", DateUtil.getToday().toString());
+        parameters.add("endDate", DateUtil.getToday().toString());
         perform(MockMvcRequestBuilders.get(CURRENT_URL, RESTAURANT_ID)
                 .params(parameters))
                 .andExpect(status().isOk())
@@ -66,7 +66,7 @@ class MenuItemControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(CURRENT_URL + "/{id}", RESTAURANT_ID, MENU_ITEM_ID + 1))
                 .andExpect(status().isNoContent());
         MENU_ITEM_MATCHER.assertMatch(
-                menuItemRepository.getByRestaurantAndDateInclusive(RESTAURANT_ID, LocalDate.now().minusDays(1), LocalDate.now()),
+                menuItemRepository.getByRestaurantAndDateInclusive(RESTAURANT_ID, DateUtil.getToday().minusDays(1), DateUtil.getToday()),
                 List.of(MENU_ITEM_1_R_1_YSTRD, MENU_ITEM_3_R_1_YSTRD, MENU_ITEM_4_R_1_TODAY, MENU_ITEM_5_R_1_TODAY, MENU_ITEM_6_R_1_TODAY)
         );
     }

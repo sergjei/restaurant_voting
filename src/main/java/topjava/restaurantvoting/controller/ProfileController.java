@@ -10,7 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import topjava.restaurantvoting.model.*;
+import topjava.restaurantvoting.model.AuthUser;
+import topjava.restaurantvoting.model.Role;
+import topjava.restaurantvoting.model.User;
+import topjava.restaurantvoting.model.Vote;
 import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.repository.VoteRepository;
@@ -82,8 +85,7 @@ public class ProfileController {
 
     @GetMapping("/menu")
     public List<RestaurantTo> getMenu() {
-        List<Restaurant> origin = restaurantRepository.getTodayMenu();
-        return RestaurantsUtil.getListTosWithMenu(origin);
+        return RestaurantsUtil.getListTosWithMenu(restaurantRepository.getRestaurantWithMenuByDate(DateUtil.getToday()));
     }
 
     @GetMapping("/votes")
@@ -99,7 +101,7 @@ public class ProfileController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<VoteTo> vote(@AuthenticationPrincipal AuthUser authUser,
                                        @RequestParam(value = "restaurantId") Integer restaurantId) {
-        Vote vote = new Vote(null, LocalDate.now(), authUser.getUser(), null);
+        Vote vote = new Vote(null, DateUtil.getToday(), authUser.getUser(), null);
         vote.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restaurantId)
         ));
@@ -116,10 +118,10 @@ public class ProfileController {
         Vote current = voteRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find vote with  id = " + id)
         );
-        if (!Objects.equals(current.getVoteDate(), LocalDate.now())) {
+        if (!Objects.equals(current.getVoteDate(), DateUtil.getToday())) {
             throw new IllegalRequestTimeException("Can`t change not today vote!");
         }
-        Vote vote = new Vote(current.getId(), LocalDate.now(), authUser.getUser(),
+        Vote vote = new Vote(current.getId(), DateUtil.getToday(), authUser.getUser(),
                 restaurantRepository.findById(restaurantId).orElseThrow(
                         () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restaurantId)
                 ));

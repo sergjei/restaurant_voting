@@ -21,13 +21,10 @@ public class ValidationUtil {
         }
     }
 
-    public static void assureIdConsistentRest(BaseEntity entity, int id) {
-        if (entity.isNew()) {
-            entity.setId(id);
-        }
-        if (entity.getId() != id) {
-            throw new IllegalRequestDataException("Menu item belongs to another restaurant! " +
-                    entity.getClass().getSimpleName() + "(path) must have id: (" + entity.getId() + ")");
+    public static void assureIdConsistentRest(Integer entityId, int id) {
+        if (entityId == null) throw new IllegalRequestDataException("Error! Menu item must belong to restaurant!");
+        if (entityId != id) {
+            throw new IllegalRequestDataException("Menu item belongs to another restaurant! Restaurant(path) must have id: (" + entityId + ")");
         }
     }
 

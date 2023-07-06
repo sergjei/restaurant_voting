@@ -12,7 +12,7 @@ public class RestaurantsUtil {
 
     public static Restaurant createFromTo(RestaurantTo to) {
         return new Restaurant(
-                to.getId() == null ? null : to.getId(),
+                to.getId(),
                 to.getName(),
                 to.getAddress(),
                 to.getEmail());
@@ -20,7 +20,7 @@ public class RestaurantsUtil {
 
     public static RestaurantTo createToFrom(Restaurant origin) {
         return new RestaurantTo(
-                origin.getId() == null ? null : origin.getId(),
+                origin.getId(),
                 origin.getName(),
                 origin.getAddress(),
                 origin.getEmail(),
@@ -29,7 +29,7 @@ public class RestaurantsUtil {
 
     public static RestaurantTo createToFromWithMenu(Restaurant origin) {
         return new RestaurantTo(
-                origin.getId() == null ? null : origin.getId(),
+                origin.getId(),
                 origin.getName(),
                 origin.getAddress(),
                 origin.getEmail(),

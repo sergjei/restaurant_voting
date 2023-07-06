@@ -12,7 +12,7 @@ public class MenuItemUtil {
 
     public static MenuItem updateFromToNoRest(MenuItemTo to) {
         return new MenuItem(
-                to.getId() == null ? null : to.getId(),
+                to.getId(),
                 to.getMenuDate(),
                 to.getName(),
                 to.getPrice()
@@ -20,7 +20,7 @@ public class MenuItemUtil {
     }
 
     public static MenuItemTo createToFrom(MenuItem origin) {
-        return new MenuItemTo(origin.getId() == null ? null : origin.getId(),
+        return new MenuItemTo(origin.getId(),
                 origin.getRestaurant() == null ? null : origin.getRestaurant().getId(),
                 origin.getMenuDate(),
                 origin.getName(),

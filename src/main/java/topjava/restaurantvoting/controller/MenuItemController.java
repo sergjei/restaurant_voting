@@ -50,7 +50,7 @@ public class MenuItemController {
     public MenuItemTo get(@PathVariable("id") Integer menuItemId, @PathVariable("restaurant_id") Integer restaurantId) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find menuItem with  id = " + menuItemId));
-        ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant(), restaurantId);
+        ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant().getId(), restaurantId);
         return MenuItemUtil.createToFrom(menuItem);
     }
 
@@ -59,7 +59,7 @@ public class MenuItemController {
     public void delete(@PathVariable("id") Integer menuItemId, @PathVariable("restaurant_id") Integer restaurantId) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find menu item with  id = " + menuItemId));
-        ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant(), restaurantId);
+        ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant().getId(), restaurantId);
         menuItemRepository.deleteById(menuItemId);
     }
 
@@ -75,7 +75,7 @@ public class MenuItemController {
         if (!Objects.equals(updated.getRestaurant().getId(), restaurantId)) {
             throw new EntityNotFoundException("Menu item with id = " + menuItemId + " belongs to restaurant with id = " + updated.getRestaurant().getId());
         }
-        ValidationUtil.assureIdConsistentRest(updated.getRestaurant(), restaurantId);
+        ValidationUtil.assureIdConsistentRest(updated.getRestaurant().getId(), restaurantId);
         menuItemRepository.save(updated);
     }
 
@@ -88,7 +88,7 @@ public class MenuItemController {
         menuItem.setRestaurant(restaurantRepository.findById(menuItemTo.getRestaurant()).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find restaurant with  id = " + menuItemTo.getRestaurant())
         ));
-        ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant(), restaurantId);
+        ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant().getId(), restaurantId);
         MenuItem created = menuItemRepository.save(menuItem);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(CURRENT_URL + "/{id}")

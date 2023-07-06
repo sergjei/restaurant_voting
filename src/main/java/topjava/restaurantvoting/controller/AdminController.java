@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import topjava.restaurantvoting.model.User;
-import topjava.restaurantvoting.repository.RestaurantRepository;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.repository.VoteRepository;
 import topjava.restaurantvoting.to.RestaurantTo;
@@ -28,12 +27,10 @@ import java.util.List;
 public class AdminController {
     public static final String CURRENT_URL = "/rest/admin";
     public UserRepository userRepository;
-    public RestaurantRepository restaurantRepository;
     public VoteRepository voteRepository;
 
-    public AdminController(UserRepository userRepository, RestaurantRepository restaurantRepository, VoteRepository voteRepository) {
+    public AdminController(UserRepository userRepository, VoteRepository voteRepository) {
         this.userRepository = userRepository;
-        this.restaurantRepository = restaurantRepository;
         this.voteRepository = voteRepository;
     }
 
@@ -79,7 +76,7 @@ public class AdminController {
 
     @GetMapping("/votes_count/today")
     public List<RestaurantTo> getTodayVotes() {
-        return voteRepository.getVoteCountByRestaurant(LocalDate.now(), LocalDate.now());
+        return voteRepository.getVoteCountByRestaurant(DateUtil.getToday(), DateUtil.getToday());
     }
 
     @GetMapping("/votes_count")
