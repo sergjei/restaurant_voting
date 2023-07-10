@@ -1,7 +1,6 @@
 package topjava.restaurantvoting.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -12,28 +11,22 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import topjava.restaurantvoting.model.User;
 import topjava.restaurantvoting.repository.UserRepository;
-import topjava.restaurantvoting.repository.VoteRepository;
-import topjava.restaurantvoting.to.RestaurantTo;
-import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 
 @RestController
-@RequestMapping(value = AdminController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminUserController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name = "basicAuth")
 @Transactional
-public class AdminController {
+public class AdminUserController {
     public static final String CURRENT_URL = "/rest/admin";
     public UserRepository userRepository;
-    public VoteRepository voteRepository;
 
-    public AdminController(UserRepository userRepository, VoteRepository voteRepository) {
+    public AdminUserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.voteRepository = voteRepository;
     }
 
     @GetMapping("/users")
@@ -74,18 +67,6 @@ public class AdminController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         userRepository.deleteById(id);
-    }
-
-    @GetMapping("/votes_count/today")
-    public List<RestaurantTo> getTodayVotes() {
-        return voteRepository.getVoteCountByRestaurant(DateUtil.getToday(), DateUtil.getToday());
-    }
-
-    @GetMapping("/votes_count")
-    public List<RestaurantTo> getVoteCount(@RequestParam(value = "startDate") @Nullable LocalDate startDate,
-                                           @RequestParam(value = "endDate") @Nullable LocalDate endDate) {
-        return voteRepository.getVoteCountByRestaurant(DateUtil.checkedStartDateOrMin(startDate),
-                DateUtil.checkedEndDate(endDate));
     }
 }
 

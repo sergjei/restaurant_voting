@@ -30,7 +30,7 @@ public class UserTestData {
         USER_2.setVotes(List.of(VoteTestData.VOTE_3));
     }
 
-    public static User getUpdated(User old) {
+    public static User getUpdatedAdmin(User old) {
         User updated = new User();
         updated.setId(old.getId());
         updated.setPassword("updatedPass");
@@ -38,6 +38,17 @@ public class UserTestData {
         updated.setFirstName("updatedName");
         updated.setLastName("updatedLastName");
         updated.setRoles(Collections.singletonList(Role.ADMIN));
+        return updated;
+    }
+
+    public static User getUpdated(User old) {
+        User updated = new User();
+        updated.setId(old.getId());
+        updated.setPassword("updatedPass");
+        updated.setEmail("updated@gmail.com");
+        updated.setFirstName("updatedName");
+        updated.setLastName("updatedLastName");
+        updated.setRoles(Collections.singletonList(Role.USER));
         return updated;
     }
 
