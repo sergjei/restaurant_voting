@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import topjava.restaurantvoting.model.AuthUser;
@@ -23,6 +24,7 @@ import topjava.restaurantvoting.utils.DateUtil;
 import topjava.restaurantvoting.utils.RestaurantsUtil;
 import topjava.restaurantvoting.utils.ValidationUtil;
 import topjava.restaurantvoting.utils.VotesUtil;
+import topjava.restaurantvoting.utils.exception.IllegalRequestDataException;
 import topjava.restaurantvoting.utils.exception.IllegalRequestTimeException;
 
 import java.net.URI;
@@ -35,6 +37,7 @@ import java.util.Set;
 @RestController
 @RequestMapping(value = ProfileController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name = "basicAuth")
+@Transactional
 public class ProfileController {
 
     public static final String CURRENT_URL = "/rest/profile";
@@ -125,10 +128,10 @@ public class ProfileController {
                 restaurantRepository.findById(restaurantId).orElseThrow(
                         () -> new EntityNotFoundException("Can`t find restaurant with  id = " + restaurantId)
                 ));
-        if (LocalTime.now().isBefore(LocalTime.of(11, 0, 0))) {
+        if (LocalTime.now(DateUtil.getClock()).isBefore(DateUtil.CHANGE_VOTE_END)) {
             Vote actual = voteRepository.save(vote);
             return ResponseEntity.ok(VotesUtil.createToFrom(actual));
         }
-        throw new IllegalRequestTimeException("Vote can be changed only before 11 AM");
+        throw new IllegalRequestDataException("Vote can be changed only before 11 AM");
     }
 }

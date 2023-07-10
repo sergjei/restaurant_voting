@@ -59,6 +59,9 @@ logging:
     topjava.restaurantvoting: DEBUG
     org.springframework.security.web.FilterChainProxy: WARN
     org.hibernate: INFO
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG
+    org.hibernate.engine.transaction.internal.TransactionImpl: DEBUG
   file:
     name: application.log
   pattern:

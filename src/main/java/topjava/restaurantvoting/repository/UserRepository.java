@@ -29,13 +29,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u JOIN FETCH u.roles")
     List<User> findAll();
 
-    @Override
     @Modifying
     @Transactional
     @CachePut(value = "users", key = "#user.email")
     User save(User user);
 
-    @Override
     @Modifying
     @Transactional
     @CacheEvict(value = "users", allEntries = true)

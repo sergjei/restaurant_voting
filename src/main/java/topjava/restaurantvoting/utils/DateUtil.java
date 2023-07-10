@@ -1,10 +1,29 @@
 package topjava.restaurantvoting.utils;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class DateUtil {
-
+    public static LocalTime CHANGE_VOTE_END = LocalTime.of(11, 0, 0);
     public static LocalDate TODAY = LocalDate.now();
+    private static Clock clock;
+
+    static {
+        initDefaultClock();
+    }
+
+    public static Clock getClock() {
+        return clock;
+    }
+
+    public static void setClock(Clock newClock) {
+        clock = newClock;
+    }
+
+    public static void initDefaultClock() {
+        setClock(Clock.system(Clock.systemDefaultZone().getZone()));
+    }
 
     public static LocalDate getToday() {
         LocalDate now = LocalDate.now();

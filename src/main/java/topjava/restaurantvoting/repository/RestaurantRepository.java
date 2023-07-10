@@ -26,13 +26,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
     @Cacheable(cacheNames = "restaurants")
     Optional<Restaurant> findById(Integer id);
 
-    @Override
     @Modifying
     @Transactional
     @CachePut(value = "restaurants", key = "#restaurant.id")
     Restaurant save(Restaurant restaurant);
 
-    @Override
     @Modifying
     @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)

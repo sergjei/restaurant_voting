@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import topjava.restaurantvoting.repository.RestaurantRepository;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = RestaurantController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name = "basicAuth")
+@Transactional
 public class RestaurantController {
 
     public static final String CURRENT_URL = "/rest/admin/restaurants";

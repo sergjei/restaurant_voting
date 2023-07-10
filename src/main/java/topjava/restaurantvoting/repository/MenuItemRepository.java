@@ -21,13 +21,11 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
                                                    @Param("startDate") LocalDate startDate,
                                                    @Param("endDate") LocalDate endDate);
 
-    @Override
     @Modifying
     @Transactional
     @CachePut(value = "menu", key = "#menuItem.id")
     MenuItem save(MenuItem menuItem);
 
-    @Override
     @Modifying
     @Transactional
     @CacheEvict(value = "menu", allEntries = true)

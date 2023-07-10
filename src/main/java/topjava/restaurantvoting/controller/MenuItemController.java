@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import topjava.restaurantvoting.model.MenuItem;
@@ -27,6 +28,7 @@ import static topjava.restaurantvoting.utils.MenuItemUtil.updateFromToNoRest;
 @RestController
 @RequestMapping(value = MenuItemController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name = "basicAuth")
+@Transactional
 public class MenuItemController {
     public static final String CURRENT_URL = "/rest/admin/restaurants/{restaurant_id}/menu_items";
     public MenuItemRepository menuItemRepository;

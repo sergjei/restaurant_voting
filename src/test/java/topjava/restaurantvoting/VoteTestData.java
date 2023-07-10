@@ -15,9 +15,9 @@ public class VoteTestData {
     public static final Vote VOTE_1 = new Vote(VOTE_ID, DateUtil.TODAY.minusDays(1), USER, RESTAURANT_1);
     public static final Vote VOTE_2 = new Vote(VOTE_ID + 1, DateUtil.TODAY.minusDays(1), ADMIN, RESTAURANT_2);
     public static final Vote VOTE_3 = new Vote(VOTE_ID + 2, DateUtil.TODAY.minusDays(1), USER_2, RESTAURANT_2);
-    public static final Vote NEW_VOTE = new Vote(VOTE_ID + 3, DateUtil.TODAY, USER, RESTAURANT_1);
+    public static final Vote VOTE_4 = new Vote(VOTE_ID + 3, DateUtil.TODAY, USER, RESTAURANT_1);
 
     public static Vote getNewVote() {
-        return new Vote(null, DateUtil.getToday(), USER, RESTAURANT_1);
+        return new Vote(null, DateUtil.getToday(), USER_2, RESTAURANT_1);
     }
 }

@@ -22,7 +22,7 @@ public class RestaurantTestData {
     }
 
     public static void setVotesRest() {
-        RESTAURANT_1.setVotes(List.of(VoteTestData.VOTE_1));
+        RESTAURANT_1.setVotes(List.of(VoteTestData.VOTE_1, VoteTestData.VOTE_4));
         RESTAURANT_2.setVotes(List.of(VoteTestData.VOTE_2, VoteTestData.VOTE_3));
     }
 

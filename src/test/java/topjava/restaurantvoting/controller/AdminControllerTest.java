@@ -135,7 +135,7 @@ class AdminControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         List<RestaurantTo> restaurantTos = RESTAURANT_TO_MATCHER.readFromJsonList(action);
         assertEquals(2, restaurantTos.size());
-        assertEquals(0, restaurantTos.get(0).getVoteCount());
+        assertEquals(1, restaurantTos.get(0).getVoteCount());
         assertEquals(0, restaurantTos.get(1).getVoteCount());
         Restaurant firstRest = RestaurantsUtil.createFromTo(restaurantTos.get(0));
         Restaurant secondRest = RestaurantsUtil.createFromTo(restaurantTos.get(1));

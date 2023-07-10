@@ -30,5 +30,6 @@ VALUES (CURRENT_DATE() - 1, 'Hot-dog', 700, 1),
 INSERT INTO vote (vote_date, restaurant_id, user_id)
 VALUES (CURRENT_DATE() - 1, 1, 1),
        (CURRENT_DATE() - 1, 2, 2),
-       (CURRENT_DATE() - 1, 2, 3);
+       (CURRENT_DATE() - 1, 2, 3),
+       (CURRENT_DATE(), 1, 1);
 

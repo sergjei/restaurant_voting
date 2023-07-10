@@ -25,6 +25,7 @@ public class UserTestData {
 
     public static void setVotes() {
         USER.setVotes(List.of(VoteTestData.VOTE_1));
+        USER.setVotes(List.of(VoteTestData.VOTE_4));
         ADMIN.setVotes(List.of(VoteTestData.VOTE_2));
         USER_2.setVotes(List.of(VoteTestData.VOTE_3));
     }
