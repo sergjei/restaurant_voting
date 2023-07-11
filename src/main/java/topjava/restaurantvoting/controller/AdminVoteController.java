@@ -33,6 +33,7 @@ public class AdminVoteController {
         return voteRepository.getVoteCountByRestaurant(DateUtil.getToday(), DateUtil.getToday());
     }
 
+    //method can be used for analytics, added an index  "vote_per_restaurant_per_day" to optimize it
     @GetMapping("/votes_count")
     public List<RestaurantTo> getVoteCount(@RequestParam(value = "startDate") @Nullable LocalDate startDate,
                                            @RequestParam(value = "endDate") @Nullable LocalDate endDate) {

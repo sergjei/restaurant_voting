@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Table(name = "menu_item", indexes = {
         @Index(name = "restaurant_uniq_menuitem_date", columnList = "menu_date,restaurant_id,name", unique = true),
         @Index(name = "restaurant_menu_date", columnList = "menu_date, restaurant_id"),
-        @Index(name = "restaurant_menu_item", columnList = "id, restaurant_id"),
+        @Index(name = "restaurant_menu_item", columnList = "id, restaurant_id")
 })
 public class MenuItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)

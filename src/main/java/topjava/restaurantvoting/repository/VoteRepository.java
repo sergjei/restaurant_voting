@@ -15,31 +15,10 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface VoteRepository extends JpaRepository<Vote, Integer> {
 
-    @Query("SELECT v FROM Vote v WHERE v.voteDate = CURRENT_DATE()")
-    List<Vote> getToday();
-
-    @Query("SELECT v FROM Vote v WHERE v.voteDate>=:startDate AND v.voteDate<=:endDate")
-    List<Vote> getByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
-
     @Query("SELECT v FROM Vote v WHERE v.user.id IN :userId AND v.voteDate>=:startDate AND v.voteDate<=:endDate")
     List<Vote> getByDateAndUser(@Param("userId") List<Integer> userId,
                                 @Param("startDate") LocalDate startDate,
                                 @Param("endDate") LocalDate endDate);
-
-    @Query("SELECT v FROM Vote v WHERE v.restaurant.id IN :restaurantId AND v.voteDate>=:startDate AND v.voteDate<=:endDate")
-    List<Vote> getByDateAndRestaurant(@Param("restaurantId") List<Integer> restaurantId,
-                                      @Param("startDate") LocalDate startDate,
-                                      @Param("endDate") LocalDate endDate);
-
-    @Query("SELECT v FROM Vote v WHERE v.user.id =:userId AND v.voteDate = CURRENT_DATE()")
-    Vote getTodayByUser(@Param("userId") Integer userId);
-
-    @Query("SELECT  v FROM Vote v WHERE v.user.id IN :userIds " +
-            "AND v.restaurant.id IN :restaurantIds AND v.voteDate>=:startDate AND v.voteDate<=:endDate")
-    List<Vote> getCustom(@Param("userIds") List<Integer> userIds,
-                         @Param("restaurantIds") List<Integer> restaurantIds,
-                         @Param("startDate") LocalDate startDate,
-                         @Param("endDate") LocalDate endDate);
 
     @Query("SELECT new topjava.restaurantvoting.to.RestaurantTo(r.id,r.name,r.address,r.email," +
             "(SELECT COUNT(v) FROM Vote v WHERE v.restaurant.id = r.id AND v.voteDate>=:startDate AND v.voteDate<=:endDate)) " +
