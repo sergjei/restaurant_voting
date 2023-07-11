@@ -1,7 +1,6 @@
 package topjava.restaurantvoting.repository;
 
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +22,7 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
 
     @Modifying
     @Transactional
-    @CachePut(value = "menu", key = "#menuItem.id")
+    @CacheEvict(value = "menu", allEntries = true)
     MenuItem save(MenuItem menuItem);
 
     @Modifying

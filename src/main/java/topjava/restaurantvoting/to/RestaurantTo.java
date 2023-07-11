@@ -32,15 +32,6 @@ public class RestaurantTo extends BaseEntity {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Integer voteCount;
 
-    public RestaurantTo(Integer id, String name, String address, String email, List<MenuItemTo> menu, Long voteCount) {
-        super(id);
-        this.name = name;
-        this.address = address;
-        this.email = email;
-        this.menu = menu;
-        this.voteCount = voteCount == null ? null : voteCount.intValue();
-    }
-
     public RestaurantTo(Integer id, String name, String address, String email, Long voteCount) {
         super(id);
         this.name = name;

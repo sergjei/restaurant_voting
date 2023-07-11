@@ -28,13 +28,10 @@ public class RestaurantsUtil {
     }
 
     public static RestaurantTo createToFromWithMenu(Restaurant origin) {
-        return new RestaurantTo(
-                origin.getId(),
-                origin.getName(),
-                origin.getAddress(),
-                origin.getEmail(),
-                origin.getMenu() == null ? null : MenuItemUtil.getListTos(origin.getMenu()),
-                null);
+        RestaurantTo newTo = new RestaurantTo(origin.getId(), origin.getName(),
+                origin.getAddress(), origin.getEmail(), null);
+        newTo.setMenu(origin.getMenu() == null ? null : MenuItemUtil.getListTos(origin.getMenu()));
+        return newTo;
     }
 
     public static List<RestaurantTo> getListTos(List<Restaurant> restaurants) {

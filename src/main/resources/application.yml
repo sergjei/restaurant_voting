@@ -51,7 +51,7 @@ spring:
   #      password: password
   #      roles: USER
   cache:
-    cache-names: users, menu, restaurants
+    cache-names: users, menu
     caffeine.spec: maximumSize=5000,expireAfterAccess=600s
 logging:
   level:
@@ -59,9 +59,10 @@ logging:
     topjava.restaurantvoting: DEBUG
     org.springframework.security.web.FilterChainProxy: WARN
     org.hibernate: INFO
-    org.springframework.orm.jpa: DEBUG
-    org.springframework.transaction: DEBUG
-    org.hibernate.engine.transaction.internal.TransactionImpl: DEBUG
+    #    org.springframework.orm.jpa: DEBUG
+    #    org.springframework.transaction: DEBUG
+    #    org.hibernate.engine.transaction.internal.TransactionImpl: DEBUG
+    org.springframework.cache: TRACE
   file:
     name: application.log
   pattern:

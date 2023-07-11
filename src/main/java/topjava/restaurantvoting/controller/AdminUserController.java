@@ -9,12 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import topjava.restaurantvoting.model.Role;
 import topjava.restaurantvoting.model.User;
 import topjava.restaurantvoting.repository.UserRepository;
 import topjava.restaurantvoting.utils.ValidationUtil;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 
 @RestController
@@ -50,6 +52,7 @@ public class AdminUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Integer id, @Valid @RequestBody User updated) {
         ValidationUtil.assureIdConsistent(updated, id);
+        if (null == updated.getRoles()) updated.setRoles(Set.of(Role.USER));
         userRepository.save(updated);
     }
 
