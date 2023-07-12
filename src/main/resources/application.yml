@@ -56,7 +56,7 @@ spring:
 logging:
   level:
     root: WARN
-    topjava.restaurantvoting: DEBUG
+    com.github.sergjei.restaurant_voting: DEBUG
     org.springframework.security.web.FilterChainProxy: WARN
     org.hibernate: INFO
     #    org.springframework.orm.jpa: DEBUG

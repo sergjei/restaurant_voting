@@ -8,11 +8,11 @@
         <version>3.0.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>topjava</groupId>
-    <artifactId>restaurant-voting</artifactId>
+    <groupId>com.github.sergjei</groupId>
+    <artifactId>restaurant_voting</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>restaurant-voting</name>
+    <name>restaurant_voting</name>
     <description>Graduate project for TopJava Internship</description>
     <properties>
         <java.version>19</java.version>
