@@ -11,10 +11,9 @@ import com.github.sergjei.restaurant_voting.utils.DateUtil;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "vote", indexes = {
-        @Index(name = "user_vote_per_day", columnList = "user_id,vote_date", unique = true),
-        @Index(name = "vote_per_restaurant_per_day", columnList = "restaurant_id,vote_date")
-})
+@Table(name = "vote", indexes =
+        @Index(name = "user_vote_per_day", columnList = "user_id,vote_date", unique = true)
+)
 public class Vote extends com.github.sergjei.restaurant_voting.model.BaseEntity {
     @Column(name = "vote_date")
     @DateTimeFormat
