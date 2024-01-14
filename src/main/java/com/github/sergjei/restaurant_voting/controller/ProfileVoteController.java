@@ -68,7 +68,7 @@ public class ProfileVoteController {
     @PutMapping(value = "/votes")
     public ResponseEntity<VoteTo> changeVote(@AuthenticationPrincipal AuthUser authUser,
                                              @RequestParam(value = "restaurantId") Integer restaurantId) {
-        Vote current = voteRepository.getByDateAndUserForOneDay(authUser.id(), DateUtil.TODAY).orElseThrow(
+        Vote current = voteRepository.getByDateAndUserForOneDay(authUser.id(), DateUtil.getToday()).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find today`s vote! ")
         );
         if (!Objects.equals(current.getVoteDate(), DateUtil.getToday())) {

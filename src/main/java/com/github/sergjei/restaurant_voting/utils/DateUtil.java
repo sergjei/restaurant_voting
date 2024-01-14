@@ -6,7 +6,7 @@ import java.time.LocalTime;
 
 public class DateUtil {
     public static LocalTime CHANGE_VOTE_END = LocalTime.of(11, 0, 0);
-    public static LocalDate TODAY = LocalDate.now();
+    public static LocalDate TODAY;
     private static Clock clock;
 
     static {
@@ -26,14 +26,10 @@ public class DateUtil {
     }
 
     public static LocalDate getToday() {
-        LocalDate now = LocalDate.now();
-        if (TODAY.isEqual(now)) {
-            return TODAY;
-        } else {
-            TODAY = now;
+            TODAY = LocalDate.now();
             return TODAY;
         }
-    }
+
 
     public static LocalDate checkedStartDateOrMin(LocalDate date) {
         if (date == null) {
