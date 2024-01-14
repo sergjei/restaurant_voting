@@ -1,5 +1,10 @@
 package com.github.sergjei.restaurant_voting.controller;
 
+import com.github.sergjei.restaurant_voting.repository.VoteRepository;
+import com.github.sergjei.restaurant_voting.to.VoteTo;
+import com.github.sergjei.restaurant_voting.utils.DateUtil;
+import com.github.sergjei.restaurant_voting.utils.VotesUtil;
+import com.github.sergjei.restaurant_voting.utils.json.JsonUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,25 +12,18 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.github.sergjei.restaurant_voting.repository.VoteRepository;
-import com.github.sergjei.restaurant_voting.to.VoteTo;
-import com.github.sergjei.restaurant_voting.utils.DateUtil;
-import com.github.sergjei.restaurant_voting.utils.VotesUtil;
-import com.github.sergjei.restaurant_voting.utils.json.JsonUtil;
 
-import java.time.Clock;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static com.github.sergjei.restaurant_voting.RestaurantTestData.RESTAURANT_ID;
 import static com.github.sergjei.restaurant_voting.RestaurantTestData.setVotesRest;
 import static com.github.sergjei.restaurant_voting.UserTestData.*;
 import static com.github.sergjei.restaurant_voting.VoteTestData.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ProfileVoteControllerTest extends AbstractControllerTest {
     public static final String CURRENT_URL = "/rest/profile";
@@ -63,8 +61,7 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_EMAIL)
     void changeVote() throws Exception {
-        Clock fixedClock = Clock.fixed(LocalTime.of(10, 59, 59).atDate(DateUtil.TODAY).atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
-        DateUtil.setClock(fixedClock);
+        DateUtil.setChangeVoteEndTime(LocalTime.now().plusSeconds(1));
         VoteTo origin = VotesUtil.createToFrom(voteRepository.findById(VOTE_ID + 3).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find vote with  id = " + VOTE_ID + 3)
         ));
@@ -74,19 +71,18 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
         VoteTo updated = VOTE_TO_MATCHER.readFromJson(actionUpdate);
         origin.setRestaurantId(2);
         VOTE_TO_MATCHER.assertMatch(updated, origin);
-        DateUtil.initDefaultClock();
+        DateUtil.setChangeVoteEndTime(LocalTime.of(11, 0, 0));
     }
 
     @Test
     @WithUserDetails(value = USER_EMAIL)
     void changeVoteAfterEleven() throws Exception {
-        Clock fixedClock = Clock.fixed(LocalTime.of(11, 0, 0).atDate(DateUtil.TODAY).atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
-        DateUtil.setClock(fixedClock);
+        DateUtil.setChangeVoteEndTime(LocalTime.now().minusSeconds(1));
         perform(MockMvcRequestBuilders.put(CURRENT_URL + "/votes")
                 .param("restaurantId", "2"))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(result -> assertEquals("422 UNPROCESSABLE_ENTITY \"Vote can be changed only before 11 AM\"", result.getResolvedException().getMessage()));
-        DateUtil.initDefaultClock();
+        DateUtil.setChangeVoteEndTime(LocalTime.of(11, 0, 0));
     }
 }

@@ -52,4 +52,8 @@ public class DateUtil {
         else return date;
     }
 
+    public static void setChangeVoteEndTime(LocalTime time){
+        CHANGE_VOTE_END = time;
+    }
+
 }
