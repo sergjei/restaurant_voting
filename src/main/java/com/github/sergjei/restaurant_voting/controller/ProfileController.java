@@ -1,5 +1,10 @@
 package com.github.sergjei.restaurant_voting.controller;
 
+import com.github.sergjei.restaurant_voting.model.AuthUser;
+import com.github.sergjei.restaurant_voting.model.Role;
+import com.github.sergjei.restaurant_voting.model.User;
+import com.github.sergjei.restaurant_voting.repository.UserRepository;
+import com.github.sergjei.restaurant_voting.utils.ValidationUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -9,18 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import com.github.sergjei.restaurant_voting.model.AuthUser;
-import com.github.sergjei.restaurant_voting.model.Role;
-import com.github.sergjei.restaurant_voting.model.User;
-import com.github.sergjei.restaurant_voting.repository.RestaurantRepository;
-import com.github.sergjei.restaurant_voting.repository.UserRepository;
-import com.github.sergjei.restaurant_voting.to.RestaurantTo;
-import com.github.sergjei.restaurant_voting.utils.DateUtil;
-import com.github.sergjei.restaurant_voting.utils.RestaurantsUtil;
-import com.github.sergjei.restaurant_voting.utils.ValidationUtil;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -31,11 +26,9 @@ public class ProfileController {
 
     public static final String CURRENT_URL = "/rest/profile";
     public UserRepository userRepository;
-    public RestaurantRepository restaurantRepository;
 
-    public ProfileController(UserRepository userRepository, RestaurantRepository restaurantRepository) {
+    public ProfileController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.restaurantRepository = restaurantRepository;
     }
 
     @GetMapping
@@ -72,10 +65,5 @@ public class ProfileController {
                 .path(CURRENT_URL + "/register/{id}")
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
-    }
-
-    @GetMapping("/menu")
-    public List<RestaurantTo> getMenu() {
-        return RestaurantsUtil.getListTosWithMenu(restaurantRepository.getRestaurantWithMenuByDate(DateUtil.getToday()));
     }
 }

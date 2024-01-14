@@ -1,5 +1,8 @@
 package com.github.sergjei.restaurant_voting.controller;
 
+import com.github.sergjei.restaurant_voting.model.User;
+import com.github.sergjei.restaurant_voting.repository.UserRepository;
+import com.github.sergjei.restaurant_voting.utils.json.JsonUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,23 +10,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.github.sergjei.restaurant_voting.RestaurantTestData;
-import com.github.sergjei.restaurant_voting.model.User;
-import com.github.sergjei.restaurant_voting.repository.UserRepository;
-import com.github.sergjei.restaurant_voting.to.RestaurantTo;
-import com.github.sergjei.restaurant_voting.utils.MenuItemUtil;
-import com.github.sergjei.restaurant_voting.utils.RestaurantsUtil;
-import com.github.sergjei.restaurant_voting.utils.json.JsonUtil;
 
 import java.util.List;
 
+import static com.github.sergjei.restaurant_voting.UserTestData.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.github.sergjei.restaurant_voting.MenuItemTestData.*;
-import static com.github.sergjei.restaurant_voting.RestaurantTestData.RESTAURANT_2;
-import static com.github.sergjei.restaurant_voting.RestaurantTestData.RESTAURANT_TO_MATCHER;
-import static com.github.sergjei.restaurant_voting.UserTestData.*;
 
 class ProfileControllerTest extends AbstractControllerTest {
     public static final String CURRENT_URL = "/rest/profile";
@@ -96,18 +89,5 @@ class ProfileControllerTest extends AbstractControllerTest {
         USER_MATCHER.assertMatch(userRepository.findById(created.getId()).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find user with  id = " + created.getId())
         ), newOne);
-    }
-
-    @Test
-    @WithUserDetails(value = USER_EMAIL)
-    void getMenu() throws Exception {
-        RestaurantTestData.setTodayMenu();
-        ResultActions action = perform(MockMvcRequestBuilders.get(CURRENT_URL + "/menu"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_TO_MATCHER.contentJson(RestaurantsUtil.getListTos(List.of(RestaurantTestData.RESTAURANT_1, RESTAURANT_2))));
-        List<RestaurantTo> restaurants = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), RestaurantTo.class);
-        MENU_ITEM_TO_MATCHER.assertMatch(restaurants.get(0).getMenu(), MenuItemUtil.getListTos(R1_MENU_TODAY));
-        MENU_ITEM_TO_MATCHER.assertMatch(restaurants.get(1).getMenu(), MenuItemUtil.getListTos(R2_MENU_TODAY));
     }
 }
