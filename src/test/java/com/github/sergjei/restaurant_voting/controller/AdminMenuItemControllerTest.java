@@ -24,7 +24,7 @@ import static com.github.sergjei.restaurant_voting.MenuItemTestData.*;
 import static com.github.sergjei.restaurant_voting.RestaurantTestData.RESTAURANT_ID;
 import static com.github.sergjei.restaurant_voting.UserTestData.ADMIN_EMAIL;
 
-class MenuItemControllerTest extends AbstractControllerTest {
+class AdminMenuItemControllerTest extends AbstractControllerTest {
     public static final String CURRENT_URL = "/rest/admin/restaurants/{restaurant_id}/menu_items";
     @Autowired
     private MenuItemRepository menuItemRepository;

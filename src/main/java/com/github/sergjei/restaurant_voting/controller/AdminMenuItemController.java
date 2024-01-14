@@ -26,15 +26,15 @@ import java.util.Objects;
 import static com.github.sergjei.restaurant_voting.utils.MenuItemUtil.updateFromToNoRest;
 
 @RestController
-@RequestMapping(value = MenuItemController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminMenuItemController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name = "basicAuth")
 @Transactional
-public class MenuItemController {
+public class AdminMenuItemController {
     public static final String CURRENT_URL = "/rest/admin/restaurants/{restaurant_id}/menu_items";
     public MenuItemRepository menuItemRepository;
     public RestaurantRepository restaurantRepository;
 
-    public MenuItemController(MenuItemRepository menuItemRepository, RestaurantRepository restaurantRepository) {
+    public AdminMenuItemController(MenuItemRepository menuItemRepository, RestaurantRepository restaurantRepository) {
         this.menuItemRepository = menuItemRepository;
         this.restaurantRepository = restaurantRepository;
     }

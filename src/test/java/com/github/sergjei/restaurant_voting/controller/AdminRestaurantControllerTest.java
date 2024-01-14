@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.github.sergjei.restaurant_voting.RestaurantTestData.*;
 import static com.github.sergjei.restaurant_voting.UserTestData.ADMIN_EMAIL;
 
-class RestaurantControllerTest extends AbstractControllerTest {
+class AdminRestaurantControllerTest extends AbstractControllerTest {
     public static final String CURRENT_URL = "/rest/admin/restaurants";
     @Autowired
     private RestaurantRepository restaurantRepository;

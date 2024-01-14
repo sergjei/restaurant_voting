@@ -18,15 +18,15 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = RestaurantController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminRestaurantController.CURRENT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name = "basicAuth")
 @Transactional
-public class RestaurantController {
+public class AdminRestaurantController {
 
     public static final String CURRENT_URL = "/rest/admin/restaurants";
     public RestaurantRepository restaurantRepository;
 
-    public RestaurantController(RestaurantRepository restaurantRepository) {
+    public AdminRestaurantController(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
 

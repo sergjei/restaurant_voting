@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "menu_item", indexes =
-        @Index(name = "restaurant_uniq_menuitem_date", columnList = "menu_date,restaurant_id,name", unique = true)
+        @Index(name = "restaurant_uniq_menuitem_date", columnList = "menu_date, id ,restaurant_id, name", unique = true)
 )
 public class MenuItem extends com.github.sergjei.restaurant_voting.model.BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
