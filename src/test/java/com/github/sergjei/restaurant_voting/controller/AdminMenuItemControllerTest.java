@@ -31,21 +31,8 @@ class AdminMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
-    void getAll() throws Exception {
+    void getTodayMenu() throws Exception {
         perform(MockMvcRequestBuilders.get(CURRENT_URL, RESTAURANT_ID))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MENU_ITEM_TO_MATCHER.contentJson(MenuItemUtil.getListTos(R1_MENU_ALL)));
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_EMAIL)
-    void getToday() throws Exception {
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("startDate", DateUtil.getToday().toString());
-        parameters.add("endDate", DateUtil.getToday().toString());
-        perform(MockMvcRequestBuilders.get(CURRENT_URL, RESTAURANT_ID)
-                .params(parameters))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MENU_ITEM_TO_MATCHER.contentJson(MenuItemUtil.getListTos(R1_MENU_TODAY)));
@@ -53,7 +40,17 @@ class AdminMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_EMAIL)
-    void get() throws Exception {
+    void getYesterdayMenu() throws Exception {
+        perform(MockMvcRequestBuilders.get(CURRENT_URL, RESTAURANT_ID)
+                .param("date", (DateUtil.getToday().minusDays(1)).toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MENU_ITEM_TO_MATCHER.contentJson(MenuItemUtil.getListTos(R1_MENU_YSTRD)));
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_EMAIL)
+    void getOne() throws Exception {
         perform(MockMvcRequestBuilders.get(CURRENT_URL + "/{id}", RESTAURANT_ID, MENU_ITEM_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -66,8 +63,8 @@ class AdminMenuItemControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(CURRENT_URL + "/{id}", RESTAURANT_ID, MENU_ITEM_ID + 1))
                 .andExpect(status().isNoContent());
         MENU_ITEM_MATCHER.assertMatch(
-                menuItemRepository.getByRestaurantAndDateInclusive(RESTAURANT_ID, DateUtil.getToday().minusDays(1), DateUtil.getToday()),
-                List.of(MENU_ITEM_1_R_1_YSTRD, MENU_ITEM_3_R_1_YSTRD, MENU_ITEM_4_R_1_TODAY, MENU_ITEM_5_R_1_TODAY, MENU_ITEM_6_R_1_TODAY)
+                menuItemRepository.getByRestaurantAndDate(RESTAURANT_ID, DateUtil.getToday().minusDays(1)),
+                List.of(MENU_ITEM_1_R_1_YSTRD, MENU_ITEM_3_R_1_YSTRD)
         );
     }
 

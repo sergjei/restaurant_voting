@@ -42,7 +42,7 @@ public class DateUtil {
         else return date;
     }
 
-    public static LocalDate checkedStartDateOrToday(LocalDate date) {
+    public static LocalDate checkDateOrToday(LocalDate date) {
         if (date == null) {
             return getToday();
         } else if (date.isAfter(getToday())) return TODAY;

@@ -41,15 +41,13 @@ public class AdminMenuItemController {
 
     @GetMapping
     public List<MenuItemTo> getAllByDate(@PathVariable("restaurant_id") Integer restaurantId,
-                                         @RequestParam(value = "startDate") @Nullable LocalDate startDate,
-                                         @RequestParam(value = "endDate") @Nullable LocalDate endDate) {
-        return MenuItemUtil.getListTos(menuItemRepository.getByRestaurantAndDateInclusive(restaurantId,
-                DateUtil.checkedStartDateOrMin(startDate),
-                DateUtil.checkedEndDate(endDate)));
+                                         @RequestParam(value = "date") @Nullable LocalDate date) {
+        return MenuItemUtil.getListTos(menuItemRepository.getByRestaurantAndDate(restaurantId,
+                DateUtil.checkDateOrToday(date)));
     }
 
     @GetMapping("/{id}")
-    public MenuItemTo get(@PathVariable("id") Integer menuItemId, @PathVariable("restaurant_id") Integer restaurantId) {
+    public MenuItemTo get(@PathVariable("id") int menuItemId, @PathVariable("restaurant_id") Integer restaurantId) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find menuItem with  id = " + menuItemId));
         ValidationUtil.assureIdConsistentRest(menuItem.getRestaurant().getId(), restaurantId);

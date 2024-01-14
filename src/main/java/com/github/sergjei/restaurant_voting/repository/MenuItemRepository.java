@@ -15,10 +15,9 @@ import java.util.List;
 @Repository
 @Transactional(readOnly = true)
 public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
-    @Query("SELECT m FROM MenuItem m WHERE m.restaurant.id =:restaurantId AND m.menuDate >= :startDate AND m.menuDate<=:endDate ")
-    List<MenuItem> getByRestaurantAndDateInclusive(@Param("restaurantId") Integer restaurantId,
-                                                   @Param("startDate") LocalDate startDate,
-                                                   @Param("endDate") LocalDate endDate);
+    @Query("SELECT m FROM MenuItem m WHERE m.restaurant.id =:restaurantId AND m.menuDate = :date")
+    List<MenuItem> getByRestaurantAndDate(@Param("restaurantId") Integer restaurantId,
+                                                   @Param("date") LocalDate date);
 
     @Modifying
     @Transactional
