@@ -68,7 +68,7 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
         VoteTo origin = VotesUtil.createToFrom(voteRepository.findById(VOTE_ID + 3).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find vote with  id = " + VOTE_ID + 3)
         ));
-        ResultActions actionUpdate = perform(MockMvcRequestBuilders.put(CURRENT_URL + "/votes/{id}", VOTE_ID + 3)
+        ResultActions actionUpdate = perform(MockMvcRequestBuilders.put(CURRENT_URL + "/votes")
                 .param("restaurantId", "2"))
                 .andDo(print());
         VoteTo updated = VOTE_TO_MATCHER.readFromJson(actionUpdate);
@@ -82,7 +82,7 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
     void changeVoteAfterEleven() throws Exception {
         Clock fixedClock = Clock.fixed(LocalTime.of(11, 0, 0).atDate(DateUtil.TODAY).atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
         DateUtil.setClock(fixedClock);
-        perform(MockMvcRequestBuilders.put(CURRENT_URL + "/votes/{id}", VOTE_ID + 3)
+        perform(MockMvcRequestBuilders.put(CURRENT_URL + "/votes")
                 .param("restaurantId", "2"))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())

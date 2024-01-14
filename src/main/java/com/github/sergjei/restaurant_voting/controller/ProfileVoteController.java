@@ -1,5 +1,14 @@
 package com.github.sergjei.restaurant_voting.controller;
 
+import com.github.sergjei.restaurant_voting.model.AuthUser;
+import com.github.sergjei.restaurant_voting.model.Vote;
+import com.github.sergjei.restaurant_voting.repository.RestaurantRepository;
+import com.github.sergjei.restaurant_voting.repository.VoteRepository;
+import com.github.sergjei.restaurant_voting.to.VoteTo;
+import com.github.sergjei.restaurant_voting.utils.DateUtil;
+import com.github.sergjei.restaurant_voting.utils.VotesUtil;
+import com.github.sergjei.restaurant_voting.utils.exception.IllegalRequestDataException;
+import com.github.sergjei.restaurant_voting.utils.exception.IllegalRequestTimeException;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,15 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import com.github.sergjei.restaurant_voting.model.AuthUser;
-import com.github.sergjei.restaurant_voting.model.Vote;
-import com.github.sergjei.restaurant_voting.repository.RestaurantRepository;
-import com.github.sergjei.restaurant_voting.repository.VoteRepository;
-import com.github.sergjei.restaurant_voting.to.VoteTo;
-import com.github.sergjei.restaurant_voting.utils.DateUtil;
-import com.github.sergjei.restaurant_voting.utils.VotesUtil;
-import com.github.sergjei.restaurant_voting.utils.exception.IllegalRequestDataException;
-import com.github.sergjei.restaurant_voting.utils.exception.IllegalRequestTimeException;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -45,7 +45,7 @@ public class ProfileVoteController {
     public List<VoteTo> getVotes(@AuthenticationPrincipal AuthUser authUser,
                                  @RequestParam @Nullable LocalDate startDate,
                                  @RequestParam @Nullable LocalDate endDate) {
-        return VotesUtil.getListTos(voteRepository.getByDateAndUser(List.of(authUser.id()),
+        return VotesUtil.getListTos(voteRepository.getByDateAndUser(authUser.id(),
                 DateUtil.checkedStartDateOrMin(startDate),
                 DateUtil.checkedEndDate(endDate)));
     }
@@ -65,11 +65,11 @@ public class ProfileVoteController {
         return ResponseEntity.created(uriOfNewResource).body(VotesUtil.createToFrom(actual));
     }
 
-    @PutMapping(value = "/votes/{id}")
+    @PutMapping(value = "/votes")
     public ResponseEntity<VoteTo> changeVote(@AuthenticationPrincipal AuthUser authUser,
-                                             @PathVariable Integer id, @RequestParam(value = "restaurantId") Integer restaurantId) {
-        Vote current = voteRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Can`t find vote with  id = " + id)
+                                             @RequestParam(value = "restaurantId") Integer restaurantId) {
+        Vote current = voteRepository.getByDateAndUserForOneDay(authUser.id(), DateUtil.TODAY).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find today`s vote! ")
         );
         if (!Objects.equals(current.getVoteDate(), DateUtil.getToday())) {
             throw new IllegalRequestTimeException("Can`t change not today vote!");
