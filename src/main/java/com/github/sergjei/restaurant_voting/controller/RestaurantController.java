@@ -6,6 +6,7 @@ import com.github.sergjei.restaurant_voting.utils.DateUtil;
 import com.github.sergjei.restaurant_voting.utils.RestaurantsUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,7 @@ public class RestaurantController {
         ));
     }
 
+    @Cacheable(cacheNames = "menu")
     @GetMapping("/todaymenu")
     public List<RestaurantTo> getMenu() {
         return RestaurantsUtil.getListTosWithMenu(restaurantRepository.getRestaurantWithMenuByDate(DateUtil.getToday()));
